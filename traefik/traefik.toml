@@ -1,0 +1,21 @@
+debug = false
+
+logLevel = "DEBUG"
+
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+      [[entryPoints.https.tls.certificates]]
+        certFile = "/certs/cert.crt"
+        keyFile = "/certs/cert.key"
+
+[web]
+address = ":8080"
+

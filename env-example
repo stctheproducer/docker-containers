@@ -1,0 +1,76 @@
+APP_CODE_PATH_HOST=../
+APP_CODE_PATH_CONTAINER=/usr
+APP_WEB_URL=stctheproducer.test
+
+VOLUMES_DRIVER=local
+NETWORKS_DRIVER=bridge
+
+DATA_PATH_HOST=~/.js/data
+
+COMPOSE_PROJECT_NAME=stctheproducer
+
+WORKSPACE_TIMEZONE=Africa/Lusaka
+
+### API #################################################
+
+STRAPI_APP_NAME=app
+STRAPI_DATABASE_CLIENT=mysql
+STRAPI_DATABASE_HOST=mysql
+STRAPI_HOST_URL=api.stctheproducer.test
+STRAPI_DATABASE_SSL=false
+STRAPI_DATABASE_SRV=false
+STRAPI_DATABASE_AUTHENTICATION_DATABASE=admin
+
+### MYSQL #################################################
+
+MYSQL_VERSION=latest
+MYSQL_DATABASE=default
+MYSQL_USER=default
+MYSQL_PASSWORD=secret
+MYSQL_PORT=3306
+MYSQL_ROOT_PASSWORD=root
+MYSQL_ENTRYPOINT_INITDB=./mysql/docker-entrypoint-initdb.d
+
+### MARIADB ###############################################
+
+MARIADB_VERSION=latest
+MARIADB_DATABASE=default
+MARIADB_USER=default
+MARIADB_PASSWORD=secret
+MARIADB_PORT=3306
+MARIADB_ROOT_PASSWORD=root
+MARIADB_ENTRYPOINT_INITDB=./mariadb/docker-entrypoint-initdb.d
+
+### JENKINS ###############################################
+
+JENKINS_HOST_HTTP_PORT=8090
+JENKINS_HOST_SLAVE_AGENT_PORT=50000
+JENKINS_HOME=./jenkins/jenkins_home
+
+### MONGODB ###############################################
+
+MONGODB_PORT=27017
+MONGO_INITDB_ROOT_USERNAME=default
+MONGO_INITDB_ROOT_PASSWORD=secret
+MONGO_INITDB_DATABASE=default
+
+### MONGO-EXPRESS ###############################################
+
+ME_URL=mongo.stctheproducer.test
+ME_CONFIG_BASICAUTH_USERNAME=default
+ME_CONFIG_BASICAUTH_PASSWORD=secret
+ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+ME_CONFIG_MONGODB_AUTH_USERNAME=default
+ME_CONFIG_MONGODB_AUTH_PASSWORD=secret
+
+### ADMINER ###############################################
+ADMINER_URL=backend.stctheproducer.test
+ADMINER_HOST=mysql
+ADMINER_DESIGN=galkaev
+
+### TRAEFIK #################################################
+
+TRAEFIK_HOST_HTTP_PORT=80
+TRAEFIK_HOST_HTTPS_PORT=443
+TRAEFIK_WEB_URL=monitor.stctheproducer.test
