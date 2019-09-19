@@ -65,7 +65,7 @@ ME_CONFIG_MONGODB_AUTH_USERNAME=default
 ME_CONFIG_MONGODB_AUTH_PASSWORD=secret
 
 ### ADMINER ###############################################
-ADMINER_URL=backend.local.test
+ADMINER_URL=adminer.local.test
 ADMINER_HOST=mysql
 ADMINER_DESIGN=galkaev
 
@@ -73,4 +73,4 @@ ADMINER_DESIGN=galkaev
 
 TRAEFIK_HOST_HTTP_PORT=80
 TRAEFIK_HOST_HTTPS_PORT=443
-TRAEFIK_WEB_URL=monitor.local.test
+TRAEFIK_WEB_URL=traefik.local.test
