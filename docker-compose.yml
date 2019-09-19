@@ -45,7 +45,7 @@ services:
     depends_on:
       - ${STRAPI_DATABASE_HOST}
     build:
-      context: ../api
+      context: ./strapi
     restart: unless-stopped
     expose:
       - "1337"
@@ -59,7 +59,7 @@ services:
       - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
     volumes:
       - ${APP_CODE_PATH_CONTAINER}/api/node_modules
-      - ${APP_CODE_PATH_HOST}/api:${APP_CODE_PATH_CONTAINER}/api
+      - ./strapi:${APP_CODE_PATH_CONTAINER}/api
 
   ### MySQL ################################################
   mysql:
