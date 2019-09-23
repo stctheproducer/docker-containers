@@ -1,5 +1,6 @@
 APP_CODE_PATH_HOST=../
 APP_CODE_PATH_CONTAINER=/usr
+API_WEB_URL=api.local.test
 APP_WEB_URL=local.test
 
 VOLUMES_DRIVER=local
@@ -16,7 +17,7 @@ WORKSPACE_TIMEZONE=Africa/Lusaka
 STRAPI_APP_NAME=app
 STRAPI_DATABASE_CLIENT=mysql
 STRAPI_DATABASE_HOST=mysql
-STRAPI_HOST_URL=api.local.test
+STRAPI_HOST_URL=strapi.local.test
 STRAPI_DATABASE_SSL=false
 STRAPI_DATABASE_SRV=false
 STRAPI_DATABASE_AUTHENTICATION_DATABASE=admin
@@ -73,4 +74,20 @@ ADMINER_DESIGN=galkaev
 
 TRAEFIK_HOST_HTTP_PORT=80
 TRAEFIK_HOST_HTTPS_PORT=443
-TRAEFIK_WEB_URL=traefik.local.test
+TRAEFIK_WEB_URL=monitor.local.test
+
+### REDIS #################################################
+
+REDIS_PORT=6379
+
+### REDIS CLUSTER #########################################
+
+REDIS_CLUSTER_PORT_RANGE=7000-7005
+
+### REDISWEBUI #########################################
+REDIS_WEBUI_URL=redis.local.test
+REDIS_WEBUI_USERNAME=default
+REDIS_WEBUI_PASSWORD=secret
+REDIS_WEBUI_CONNECT_HOST=redis
+REDIS_WEBUI_CONNECT_PORT=6379
+REDIS_WEBUI_PORT=9987
