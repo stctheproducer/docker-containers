@@ -58,6 +58,7 @@ MONGO_INITDB_DATABASE=default
 ### MONGO-EXPRESS ###############################################
 
 ME_URL=mongo.local.test
+ME_CONFIG_MONGODB_SERVER=mongo
 ME_CONFIG_BASICAUTH_USERNAME=default
 ME_CONFIG_BASICAUTH_PASSWORD=secret
 ME_CONFIG_MONGODB_ENABLE_ADMIN=false
