@@ -110,7 +110,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - TZ=${WORKSPACE_TIMEZONE}
-      - MYSQL_DATABASE=${STRAPI_DATABASE_DATABASE_NAME}
+      - MYSQL_DATABASE=${STRAPI_DATABASE_NAME}
       - MYSQL_USER=${STRAPI_DATABASE_USERNAME}
       - MYSQL_PASSWORD=${STRAPI_DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
