@@ -2,3 +2,4 @@
 docker-compose.yml
 traefik/traefik.toml
 webhook/hooks/hooks.json
+webhook/scripts/*.sh

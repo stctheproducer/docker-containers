@@ -4,8 +4,8 @@ RUN  apk --update --upgrade add git
 
 COPY /hooks/hooks.json.example /etc/webhook/hooks.json
 
-COPY /scripts/deploy.sh /opt/scripts/
+COPY /scripts/webhook-test.example /opt/scripts/webhook-test.sh
 
-RUN chmod +x /opt/scripts/deploy.sh
+RUN chmod +x /opt/scripts/*.sh
 
 CMD ["-verbose", "-hooks=/etc/webhook/hooks.json", "-hotreload"]
