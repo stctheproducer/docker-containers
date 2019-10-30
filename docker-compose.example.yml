@@ -163,6 +163,19 @@ services:
       - frontend
       - backend
 
+  ### Webhook ###################################################
+  webhook:
+    build: ./webhook
+    volumes:
+      - ${WEBHOOK_DIR}:/etc/webhook
+    networks:
+      - frontend
+    labels:
+      - "traefik.backend=webhook"
+      - "traefik.frontend.rule=Host:${WEBHOOK_URL}"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
+      - "traefik.port=9000"
+
   ### Adminer ################################################
   adminer:
     image: adminer:4.7.3-standalone
