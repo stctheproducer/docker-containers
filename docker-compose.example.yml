@@ -175,7 +175,9 @@ services:
   webhook:
     build: ./webhook
     volumes:
-      - ${WEBHOOK_DIR}:/etc/webhook
+      - ${WEBHOOK_HOOKS_DIR}:/etc/webhook
+      - ${WEBHOOK_SCRIPTS_DIR}:/opt/scripts
+      - ${WEBHOOK_DEPLOY_REPOSITORY}:/opt/deploy
     networks:
       - frontend
     labels:

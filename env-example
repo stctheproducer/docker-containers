@@ -54,7 +54,9 @@ JENKINS_HOME=./jenkins/jenkins_home
 ### WEBHOOK ###############################################
 
 WEBHOOK_URL=webhook.local.test
-WEBHOOK_DIR=./webhook/hooks
+WEBHOOK_HOOKS_DIR=./webhook/hooks
+WEBHOOK_SCRIPTS_DIR=./webhook/scripts
+WEBHOOK_DEPLOY_REPOSITORY=${APP_CODE_PATH_HOST}
 
 ### MONGODB ###############################################
 

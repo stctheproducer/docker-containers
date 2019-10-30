@@ -1,3 +1,4 @@
 .env
 docker-compose.yml
 traefik/traefik.toml
+webhook/hooks/hooks.json
