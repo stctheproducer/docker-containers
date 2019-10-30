@@ -1,6 +1,6 @@
 FROM almir/webhook
 
-RUN  apk --update --upgrade add git
+RUN  apk --update --upgrade add git bash
 
 COPY /hooks/hooks.json /etc/webhook/hooks.json
 
