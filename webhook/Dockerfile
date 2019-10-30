@@ -2,7 +2,7 @@ FROM almir/webhook
 
 RUN  apk --update --upgrade add git
 
-COPY /hooks/hooks.json.example /etc/webhook/hooks.json
+COPY /hooks/hooks.json /etc/webhook/hooks.json
 
 COPY /scripts/webhook-test.example /opt/scripts/webhook-test.sh
 
