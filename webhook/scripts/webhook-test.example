@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# git fetch --all
+# git checkout --force "origin/master"
+
+echo "I have been deployed!" >> deploy.logs
