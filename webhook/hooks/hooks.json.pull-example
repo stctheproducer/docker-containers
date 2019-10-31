@@ -1,0 +1,48 @@
+[
+	{
+		"id": "pull-request-webhook",
+		"execute-command": "/opt/scripts/deploy.sh",
+		"command-working-directory": "/opt/deploy",
+		"response-message": "Executing deploy script...",
+		"response-headers": [
+			{
+				"name": "Access-Control-Allow-Origin",
+				"value": "*"
+			}
+		],
+		"trigger-rule": {
+			"and": [
+				{
+					"match": {
+						"type": "payload-hash-sha1",
+						"secret": "mysecret",
+						"parameter": {
+							"source": "header",
+							"name": "X-Hub-Signature"
+						}
+					}
+				},
+				{
+					"match": {
+						"type": "value",
+						"value": "closed",
+						"parameter": {
+							"source": "payload",
+							"name": "action"
+						}
+					}
+				},
+        {
+          "match": {
+            "type": "value",
+            "value": "true",
+            "parameter": {
+              "source": "payload",
+              "name": "pull_request.merged"
+            }
+          }
+        }
+			]
+		}
+	}
+]

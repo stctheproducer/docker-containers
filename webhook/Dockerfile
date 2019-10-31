@@ -1,5 +1,7 @@
 FROM almir/webhook
 
-COPY /hooks/hooks.json.example /etc/webhook/hooks.json
+RUN  apk --update --upgrade add git bash
+
+COPY /hooks/hooks.json /etc/webhook/hooks.json
 
 CMD ["-verbose", "-hooks=/etc/webhook/hooks.json", "-hotreload"]
