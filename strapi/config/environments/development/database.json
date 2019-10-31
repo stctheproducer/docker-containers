@@ -4,12 +4,12 @@
     "default": {
       "connector": "strapi-hook-bookshelf",
       "settings": {
-        "client": "mysql",
-        "database": "default",
-        "host": "mysql",
-        "port": 3306,
-        "username": "default",
-        "password": "secret"
+        "client": "${process.env.STRAPI_DATABASE_CLIENT || 'mysql'}",
+        "database": "${process.env.DATABASE_NAME || 'default'}",
+        "host": "${process.env.DATABASE_HOST || 'mysql'}",
+        "port": "${process.env.DATABASE_PORT || '3306'}",
+        "username": "${process.env.DATABASE_USERNAME || 'default'}",
+        "password": "${process.env.DATABASE_PASSWORD || 'secret'}"
       },
       "options": {
         "pool": {
