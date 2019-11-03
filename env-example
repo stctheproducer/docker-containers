@@ -47,6 +47,7 @@ MARIADB_ENTRYPOINT_INITDB=./mariadb/docker-entrypoint-initdb.d
 
 ### JENKINS ###############################################
 
+JENKINS_URL=jenkins.local.test
 JENKINS_HOST_HTTP_PORT=8090
 JENKINS_HOST_SLAVE_AGENT_PORT=50000
 JENKINS_HOME=./jenkins/jenkins_home
