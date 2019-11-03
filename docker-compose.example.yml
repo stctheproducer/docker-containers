@@ -121,7 +121,10 @@ services:
 
   ### MongoDB ##############################################
   mongo:
-    image: mongo
+    build:
+      context: ./mongo
+      args:
+        - MONGO_VERSION=${MONGO_VERSION}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${STRAPI_DATABASE_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${STRAPI_DATABASE_PASSWORD}
