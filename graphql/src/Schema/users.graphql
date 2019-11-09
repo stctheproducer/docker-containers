@@ -1,0 +1,8 @@
+type User {
+  id: ID!
+  firstName: String!
+  otherName: String
+  lastName: String!
+  email: String
+  disabled: Boolean!
+}

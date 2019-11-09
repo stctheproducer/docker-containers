@@ -1,0 +1,8 @@
+.env
+.env.production
+.env.staging
+dist
+node_modules
+.idea
+.vscode
+*.log
