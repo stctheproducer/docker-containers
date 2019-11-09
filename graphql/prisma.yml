@@ -1,0 +1,23 @@
+# CMD prisma init --endpoint
+endpoint: ${env:PRISMA_ENDPOINT}
+datamodel:
+  - database/datamodel.graphql
+  # - other
+  # - other
+secret: ${env:PRISMA_SECRET}
+
+# MongoDB Requirement
+databaseType: document
+# CMD prisma deploy
+
+# Prisma Client
+generate:
+  - generator: typescript-client # javascript-client
+    output: ./src/Schema/generated/prisma-client/
+# CMD prisma generate
+
+hooks:
+  post-deploy:
+    - prisma generate
+    # - npx nexus-prisma-generate --client ./src/Schema/generated/prisma-client --output ./src/Schema/generated/nexus-prisma
+    # - yarn prisma:gen
