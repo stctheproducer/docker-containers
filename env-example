@@ -24,9 +24,22 @@ API_HOST_URL=api.local.test
 API_DATABASE_SSL=false
 API_DATABASE_AUTHENTICATION_DATABASE=admin
 
+### GRAPHQL_API #################################################
+GRAPHQL_API_ENV=development
+# Used to validate user sessions
+GRAPHQL_API_APP_SECRET=GRAPHQLAPIApplicationSecret
+# Used to access the Prisma API
+GRAPHQL_API_PRISMA_SECRET=PrismaSecret
+# See BYCRYPT docs
+GRAPHQL_API_BCRYPT_SALT_ROUNDS=12
+GRAPHQL_API_WEB_URL=graphql.local.test
+GRAPHQL_PRISMA_FRONTEND_URL=
+GRAPHQL_PRISMA_BACKEND_URL=
+GRAPHQL_PRISMA_PLAYGROUND_URL=
+
 ### PRISMA #################################################
 
-PRISMA_MANAGEMENT_API_SECRET=myownsecretwords
+PRISMA_MANAGEMENT_API_SECRET=PrimaManagmentSecret
 PRISMA_MIGRATIONS=false
 PRISMA_CONNECTION_LIMIT=2
 PRISMA_WEB_URL=prisma.local.test
