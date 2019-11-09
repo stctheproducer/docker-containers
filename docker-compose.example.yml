@@ -46,26 +46,60 @@ services:
       - "traefik.port=3000"
       - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
 
+  ## API ################################################
+
+  graphql-api:
+    build:
+      context: graphql-api
+      args:
+        NODE_ENV: ${GRAPHQL_API_ENV}
+    restart: always
+    environment:
+      NODE_ENV: ${GRAPHQL_API_ENV}
+      PRISMA_ENDPOINT: prisma
+      PRISMA_SECRET: ${GRAPHQL_API_PRISMA_SECRET}
+      APP_SECRET: ${GRAPHQL_API_APP_SECRET}
+      BCRYPT_SALT_ROUNDS: ${GRAPHQL_API_BCRYPT_SALT_ROUNDS}
+      FRONTEND_URL: ${GRAPHQL_PRISMA_FRONTEND_URL}
+      BACKEND_URL: ${GRAPHQL_PRISMA_BACKEND_URL}
+      PLAYGROUND_URL: ${GRAPHQL_PRISMA_PLAYGROUND_URL}
+    volumes:
+      - ${APP_CODE_PATH_CONTAINER}/api/node_modules
+      - ./graphql/src:${APP_CODE_PATH_CONTAINER}/api/src
+    networks:
+      - frontend
+    depends_on:
+      - prisma
+    labels:
+      - "traefik.backend=graphql-api"
+      - "traefik.frontend.rule=Host:${GRAPHQL_API_WEB_URL}"
+      - "traefik.port=4000"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
+
   ## PRISMA ################################################
   prisma:
     image: prismagraphql/prisma:1.34
     restart: always
     environment:
+      LOG_LEVEL: TRACE
       PRISMA_CONFIG: |
+        LOG_LEVEL: TRACE
         ## The Management API secret is used by the Prisma CLI to generate authentication tokens and authenticate its requests against the Prisma server.
         # managementApiSecret: ${PRISMA_MANAGEMENT_API_SECRET}
         port: 4466
         databases:
           ## MongoDB ##
           default:
+            database: ${API_DATABASE_NAME}
             connector: ${API_DATABASE_CLIENT}
-            uri: mongodb://${API_DATABASE_USERNAME}:${API_DATABASE_USERNAME}@${API_DATABASE_HOST}
+            uri: mongodb://${API_DATABASE_USERNAME}:${API_DATABASE_PASSWORD}@${API_DATABASE_HOST}/${API_DATABASE_AUTHENTICATION_DATABASE}
             migrations: ${PRISMA_MIGRATIONS}
             ssl: ${API_DATABASE_SSL}
             ## The maximum number of database connections (must be at least 2).
             # connectionLimit: ${PRISMA_CONNECTION_LIMIT}
           ## SQL ##
           # default:
+          # database: ${API_DATABASE_NAME}
           # connector: ${API_DATABASE_CLIENT}
           # host: ${API_DATABASE_HOST}
           # port: ${API_DATABASE_PORT}
@@ -158,22 +192,22 @@ services:
     labels:
       - traefik.enable=false
 
-    ### PostgreSQL ###########################################
-    postgres:
-      build: ./postgres
-      volumes:
-        - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
-        - ${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
-      ports:
-        - "${POSTGRES_PORT}:5432"
-      environment:
-        - POSTGRES_DB=${API_DATABASE_NAME}
-        - POSTGRES_USER=${API_DATABASE_USERNAME}
-        - POSTGRES_PASSWORD=${API_DATABASE_PASSWORD}
-      networks:
-        - backend
-      labels:
-        - traefik.enable=false
+  ### PostgreSQL ###########################################
+  postgres:
+    build: ./postgres
+    volumes:
+      - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
+      - ${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${API_DATABASE_NAME}
+      - POSTGRES_USER=${API_DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${API_DATABASE_PASSWORD}
+    networks:
+      - backend
+    labels:
+      - traefik.enable=false
 
   ### MongoDB ##############################################
   mongo:
