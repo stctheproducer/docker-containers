@@ -1,0 +1,11 @@
+# CMD prisma init --endpoint
+
+# MongoDB Requirement
+databaseType: document
+# CMD prisma deploy
+
+# Prisma Client
+generate:
+  - generator: typescript-client # javascript-client
+    output: ./generated/prisma-client/
+# CMD prisma generate

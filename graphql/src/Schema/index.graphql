@@ -1,0 +1,21 @@
+# import Post from "posts.graphql"
+# import User from "users.graphql"
+# import Author from "authors.graphql"
+
+type Query {
+  user(id: ID!): User
+  userEmail(email: String!): User
+  # Queries for current user
+  me: User
+
+  # Queries for API
+  posts: [Post]!
+  postAuthor(id: Int!): Author!
+  post(id: Int!): Post!
+  postsIds(ids: Int!): [Post]
+}
+
+type Mutation {
+  createUser(firstName: String!, lastName: String!, email: String!, otherName: String): User!
+  login(email: String): String # login token
+}

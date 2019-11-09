@@ -1,0 +1,22 @@
+type User {
+  id: ID! @id
+  firstName: String!
+  otherName: String
+  lastName: String!
+  email: String @unique
+  disabled: Boolean! @default(value: true)
+}
+
+type Post {
+  userId: ID!
+  id: ID! @id
+  title: String!
+  body: String!
+}
+
+type Author {
+  id: ID!
+  name: String!
+  username: String!
+  email: String!
+}
