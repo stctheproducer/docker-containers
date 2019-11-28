@@ -1,21 +1,10 @@
-# import Post from "posts.graphql"
-# import User from "users.graphql"
-# import Author from "authors.graphql"
+# import Post from "posts/posts.graphql"
+# import User from "users/users.graphql"
+# import Author from "posts/authors.graphql"
 
-type Query {
-  user(id: ID!): User
-  userEmail(email: String!): User
-  # Queries for current user
-  me: User
+# import Query from "queries.graphql"
 
-  # Queries for API
-  posts: [Post]!
-  postAuthor(id: Int!): Author!
-  post(id: Int!): Post!
-  postsIds(ids: Int!): [Post]
-}
+# import Mutation from "mutations.graphql"
 
-type Mutation {
-  createUser(firstName: String!, lastName: String!, email: String!, otherName: String): User!
-  login(email: String): String # login token
-}
+# All helpers come here
+# import PostConnection from "helpers.graphql"

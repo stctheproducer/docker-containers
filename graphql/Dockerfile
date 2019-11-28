@@ -1,34 +1,38 @@
-FROM node:8-alpine
+FROM node:lts-alpine
+# :8-alpine
+
+# Install type script globally
+# RUN npm i -g nodemon
 
 # Create app directory
 WORKDIR /usr/api
 
 # set app directoy ownership to user node of group node
-RUN chown -R node:node .
+RUN chown -R node:node /usr/api
 
 # change user
 USER node
 
 # Install app dependencies
-COPY package.json ./
-COPY yarn.lock ./
+COPY ./package.json ./
 
-RUN  yarn install --production
+# RUN  yarn install --production
+RUN  yarn install --prod --force --emoji true
 
 # build time argument to add tools for development
-ARG NODE_ENV=production
+ARG NODE_ENV
 
 # root level operations start here
 USER root
 
 # global install needs root privileges. Only installed during development
-RUN if [ "$NODE_ENV" = "development" ] ; then yarn add -g nodemon ; fi
+RUN if [ "$NODE_ENV" = "development" ] ; then npm install -g nodemon ; fi
 
-# COPY always copies files as root. change owner after copy
-COPY ./src ./src
-RUN chown -R node:node ./src/*
-
+# change user
 USER node
+
+# Change ownership during copy
+COPY --chown=node:node ./src ./src
 
 EXPOSE 4000
 CMD [ "yarn", "dev" ]

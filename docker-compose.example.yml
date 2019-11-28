@@ -48,16 +48,16 @@ services:
 
   ## API ################################################
 
-  graphql-api:
+  graphql:
     build:
-      context: graphql-api
+      context: graphql
       args:
         NODE_ENV: ${GRAPHQL_API_ENV}
     restart: always
     environment:
       NODE_ENV: ${GRAPHQL_API_ENV}
-      PRISMA_ENDPOINT: prisma
-      PRISMA_SECRET: ${GRAPHQL_API_PRISMA_SECRET}
+      PRISMA_ENDPOINT: ${PRISMA_ENDPOINT}
+      PRISMA_SECRET: ${PRISMA_SECRET}
       APP_SECRET: ${GRAPHQL_API_APP_SECRET}
       BCRYPT_SALT_ROUNDS: ${GRAPHQL_API_BCRYPT_SALT_ROUNDS}
       FRONTEND_URL: ${GRAPHQL_PRISMA_FRONTEND_URL}
@@ -80,6 +80,8 @@ services:
   prisma:
     image: prismagraphql/prisma:1.34
     restart: always
+    ports:
+      - "4466:4466"
     environment:
       LOG_LEVEL: TRACE
       PRISMA_CONFIG: |

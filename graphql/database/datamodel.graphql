@@ -4,6 +4,7 @@ type User {
   otherName: String
   lastName: String!
   email: String @unique
+  password: String
   disabled: Boolean! @default(value: true)
 }
 
@@ -15,7 +16,7 @@ type Post {
 }
 
 type Author {
-  id: ID!
+  id: ID! @id
   name: String!
   username: String!
   email: String!
