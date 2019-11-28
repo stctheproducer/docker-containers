@@ -1,0 +1,12 @@
+# this file is used by graphl-playground to identify endpoints
+projects:
+  app:
+    schemaPath: src/Schema/index.graphql
+    extensions:
+      endpoints:
+        default: ${PRISMA_ENDPOINT}
+  prisma:
+    # schemaPath: src/Schema/generated/prisma-client/prisma-schema.ts
+    schemaPath: src/Schema/prisma.graphql
+    extensions:
+      prisma: prisma.yml
