@@ -3,6 +3,12 @@ type User {
   firstName: String!
   otherName: String
   lastName: String!
-  email: String
+  email: String!
+  password: String!
   disabled: Boolean!
+}
+
+type LoggedInUser {
+  user: User!
+  token: String!
 }
