@@ -309,6 +309,8 @@ services:
   traefik:
     build:
       context: ./traefik
+    environment:
+      - DO_AUTH_TOKEN=${TRAEFIK_DO_AUTH_TOKEN}
     restart: always
     command: --docker
     volumes:
