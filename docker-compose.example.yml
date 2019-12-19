@@ -312,6 +312,9 @@ services:
     environment:
       - DO_AUTH_TOKEN=${TRAEFIK_DO_AUTH_TOKEN}
     restart: always
+    environment:
+      - NAMECHEAP_API_USER=${TRAEFIK_NAMECHEAP_API_USER}
+      - NAMECHEAP_API_KEY=${TRAEFIK_NAMECHEAP_API_KEY}
     command: --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock

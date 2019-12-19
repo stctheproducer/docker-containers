@@ -30,7 +30,7 @@ onHostRule = true
   [acme.httpChallenge]
   entryPoint = "http"
   # [acme.dnsChallenge]
-  # provider = "digitalocean"
+  # provider = "namecheap"
   # delayBeforeCheck = 0
 [[acme.domains]]
   main = "domain.com"
