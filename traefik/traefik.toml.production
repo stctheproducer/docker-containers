@@ -22,9 +22,16 @@ address = ":8080"
 
 
 [acme]
+caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 email = "email@address.com"
 storage = "acme.json"
 entryPoint = "https"
 onHostRule = true
   [acme.httpChallenge]
-    entryPoint = "http"
+  entryPoint = "http"
+  # [acme.dnsChallenge]
+  # provider = "namecheap"
+  # delayBeforeCheck = 0
+[[acme.domains]]
+  main = "domain.com"
+  sans = ["domain.com", "app.domain.com", "api.domain.com", "mongo.domain.com"]
