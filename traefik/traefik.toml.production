@@ -24,7 +24,7 @@ address = ":8080"
 [acme]
 caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 email = "email@address.com"
-storage = "acme.json"
+storage = "/etc/traefik/acme/acme.json"
 entryPoint = "https"
 onHostRule = true
   [acme.httpChallenge]
