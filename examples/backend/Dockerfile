@@ -1,13 +1,15 @@
 FROM node:lts-alpine
 
 # make the '/usr/app' folder the current working directory
-WORKDIR /usr/app
+WORKDIR /usr/api
 
 # Change ownership of work directory for good measure
-RUN chown -R node:node /usr/app
+RUN chown -R node:node /usr/api
 
 # install several dependencies
-# RUN apk add --no-cache build-base gcc autoconf automake libtool zlib-dev libpng-dev nasm
+RUN apk add --no-cache build-base gcc autoconf automake libtool zlib-dev libpng-dev nasm
+
+RUN npm i -g @adonisjs/cli
 
 # switch to non-root user
 USER node
@@ -18,7 +20,8 @@ COPY --chown=node:node ./package.json ./
 # install project dependencies
 RUN yarn
 
-# copy project files and folders to the current working directory
 COPY --chown=node:node . .
 
-CMD ["yarn", "dev"]
+EXPOSE 3333
+
+CMD ["node", "server.js"]

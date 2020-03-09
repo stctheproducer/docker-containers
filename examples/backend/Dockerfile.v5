@@ -1,0 +1,25 @@
+FROM node:lts-alpine
+
+# make the '/usr/app' folder the current working directory
+WORKDIR /usr/api
+
+# Change ownership of work directory for good measure
+RUN chown -R node:node /usr/api
+
+# switch to non-root user
+USER node
+
+# copy 'package.json'
+COPY --chown=node:node ./package.json ./
+
+# install project dependencies
+RUN yarn
+
+COPY --chown=node:node . .
+
+# build app for production with minification
+RUN node ace build --production
+
+EXPOSE 3333
+
+CMD ["node", "server.js"]

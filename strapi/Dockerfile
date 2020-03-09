@@ -14,4 +14,6 @@ RUN yarn
 
 COPY --chown=node:node . .
 
+EXPOSE 1337
+
 CMD ["yarn", "develop"]
