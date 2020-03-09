@@ -21,6 +21,10 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   webhook:
     driver: ${VOLUMES_DRIVER}
+  elasticsearch:
+    driver: ${VOLUMES_DRIVER}
+  fusionauth:
+    driver: ${VOLUMES_DRIVER}
 
 services:
   ### Application ################################################
@@ -33,6 +37,7 @@ services:
     volumes:
       - ${APP_CODE_PATH_CONTAINER}/app/node_modules
       - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
+    env_file: ../app/.env
     environment:
       HOST: 0.0.0.0
     networks:
@@ -55,16 +60,20 @@ services:
     volumes:
       - ${APP_CODE_PATH_CONTAINER}/api/node_modules
       - ${APP_CODE_PATH_HOST}/${MS_ONE}:${APP_CODE_PATH_CONTAINER}/api
+    env_file: ../${MS_ONE}/.env
     environment:
       HOST: 0.0.0.0
     networks:
-      - frontend
+      # Enable if not using the ambassador service as an api gateway
+      # - frontend
       - backend
     labels:
-      - "traefik.backend=${MS_ONE}"
-      - "traefik.frontend.rule=Host:${MS_ONE_HOST_URL}"
-      - "traefik.port=${MS_ONE_PORT}"
-      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
+      - traefik.enable=false
+      # Enable if not using the ambassador service as an api gateway
+      # - "traefik.backend=${MS_ONE}"
+      # - "traefik.frontend.rule=Host:${MS_ONE_HOST_URL}"
+      # - "traefik.port=${MS_ONE_PORT}"
+      # - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
 
   ## API ################################################
 
@@ -114,7 +123,7 @@ services:
           default:
             database: ${API_DATABASE_NAME}
             connector: ${API_DATABASE_CLIENT}
-            uri: mongodb://${API_DATABASE_USERNAME}:${API_DATABASE_PASSWORD}@${API_DATABASE_HOST}/${API_DATABASE_AUTHENTICATION_DATABASE}
+            uri: mongodb://${API_DATABASE_USER}:${API_DATABASE_PASSWORD}@${API_DATABASE_HOST}/${API_DATABASE_AUTHENTICATION_DATABASE}
             migrations: ${PRISMA_MIGRATIONS}
             ssl: ${API_DATABASE_SSL}
             ## The maximum number of database connections (must be at least 2).
@@ -125,7 +134,7 @@ services:
           # connector: ${API_DATABASE_CLIENT}
           # host: ${API_DATABASE_HOST}
           # port: ${API_DATABASE_PORT}
-          # user: ${API_DATABASE_USERNAME}
+          # user: ${API_DATABASE_USER}
           # password: ${API_DATABASE_PASSWORD}
           # migrations: ${PRISMA_MIGRATIONS}
           # ssl: ${API_DATABASE_SSL}
@@ -149,12 +158,13 @@ services:
     networks:
       - frontend
       - backend
+    env_file: ../strapi/.env
     environment:
       - DATABASE_HOST=${API_DATABASE_HOST}
       - DATABASE_PORT=${API_DATABASE_PORT}
       - DATABASE_SRV=${API_DATABASE_SRV}
       - DATABASE_NAME=${API_DATABASE_NAME}
-      - DATABASE_USERNAME=${API_DATABASE_USERNAME}
+      - DATABASE_USERNAME=${API_DATABASE_USER}
       - DATABASE_PASSWORD=${API_DATABASE_PASSWORD}
       - DATABASE_SSL=${API_DATABASE_SSL}
       - DATABASE_AUTHENTICATION_DATABASE=${API_DATABASE_AUTHENTICATION_DATABASE}
@@ -176,7 +186,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_DATABASE=${API_DATABASE_NAME}
-      - MYSQL_USER=${API_DATABASE_USERNAME}
+      - MYSQL_USER=${API_DATABASE_USER}
       - MYSQL_PASSWORD=${API_DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - TZ=${WORKSPACE_TIMEZONE}
@@ -204,7 +214,7 @@ services:
     environment:
       - TZ=${WORKSPACE_TIMEZONE}
       - MYSQL_DATABASE=${API_DATABASE_NAME}
-      - MYSQL_USER=${API_DATABASE_USERNAME}
+      - MYSQL_USER=${API_DATABASE_USER}
       - MYSQL_PASSWORD=${API_DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
     networks:
@@ -214,7 +224,10 @@ services:
 
   ### PostgreSQL ###########################################
   postgres:
-    build: ./postgres
+    build: 
+      context: ./postgres
+       args:
+        - POSTGRES_VERSION=${POSTGRES_VERSION}
     volumes:
       - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
       - ${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
@@ -222,7 +235,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     environment:
       - POSTGRES_DB=${API_DATABASE_NAME}
-      - POSTGRES_USER=${API_DATABASE_USERNAME}
+      - POSTGRES_USER=${API_DATABASE_USER}
       - POSTGRES_PASSWORD=${API_DATABASE_PASSWORD}
     networks:
       - backend
@@ -236,7 +249,7 @@ services:
       args:
         - MONGO_VERSION=${MONGO_VERSION}
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${API_DATABASE_USERNAME}
+      MONGO_INITDB_ROOT_USERNAME: ${API_DATABASE_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${API_DATABASE_PASSWORD}
       MONGO_INITDB_DATABASE: ${API_DATABASE_NAME}
     volumes:
@@ -256,13 +269,13 @@ services:
       - backend
     environment:
       ME_CONFIG_MONGODB_SERVER: ${ME_CONFIG_MONGODB_SERVER}
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${API_DATABASE_USERNAME}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${API_DATABASE_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${API_DATABASE_PASSWORD}
       ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
       ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
       ME_CONFIG_MONGODB_ENABLE_ADMIN: ${ME_CONFIG_MONGODB_ENABLE_ADMIN}
       ME_CONFIG_MONGODB_AUTH_DATABASE: ${API_DATABASE_AUTHENTICATION_DATABASE}
-      ME_CONFIG_MONGODB_AUTH_USERNAME: ${API_DATABASE_USERNAME}
+      ME_CONFIG_MONGODB_AUTH_USERNAME: ${API_DATABASE_USER}
       ME_CONFIG_MONGODB_AUTH_PASSWORD: ${API_DATABASE_PASSWORD}
     labels:
       - "traefik.backend=${TB_MONGO_EXPRESS}"
@@ -309,7 +322,7 @@ services:
   ### Adminer ################################################
   adminer:
     depends_on:
-      - ${ADMINER_HOST}
+      - ${API_DATABASE_HOST}
     image: adminer:4.7.3-standalone
     restart: unless-stopped
     environment:
@@ -322,7 +335,6 @@ services:
       - "traefik.frontend.rule=Host:${ADMINER_HOST_URL}"
       - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
       - "traefik.port=${ADMINER_CONTAINER_PORT}"
-
 
   ### Redis ################################################
   redis:
@@ -384,7 +396,139 @@ services:
       - "${TRAEFIK_HOST_HTTPS_PORT}:443"
     networks:
       - frontend
+      # Disable if not using ambassador API gateway
+      - backend
     labels:
       - "traefik.backend=${TB_TRAEFIK}"
       - "traefik.frontend.rule=Host:${TRAEFIK_HOST_URL}"
       - "traefik.port=8080"
+
+  ### AMBASSADOR #########################################
+  ambassador:
+    depends_on:
+      - traefik
+    image: quay.io/datawire/aes:1.2.2
+    # Enable demo application
+    # command: --demo
+    volumes:
+      - ./ambassador:/ambassador/ambassador-config
+    environment:
+      # don't try to watch Kubernetes for configuration changes
+      - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
+    networks:
+      - backend
+    expose:
+      - ${AMBASSADOR_CONTAINER_PORT}
+    labels:
+      - "traefik.backend=${TB_AMBASSADOR}"
+      - "traefik.http.routers.gateway.rule=Host(`${AMBASSADOR_HOST_URL}`) && PathPrefix(`${AMBASSADOR_HOST_URL_PREFIX}`)"
+      - "traefik.http.middlewares.gateway-stripprefix.stripprefix.prefixes=${AMBASSADOR_HOST_URL_PREFIX}"
+      - "traefik.http.routers.gateway.middlewares=gateway-stripprefix@docker"
+      - "traefik.http.routers.gateway.service=gateway"
+      - "traefik.http.services.gateway.loadbalancer.server.port=${AMBASSADOR_CONTAINER_PORT}"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_backend"
+
+  tour-ui:
+    image: quay.io/datawire/tour:ui-0.2.6;
+    expose:
+      - 5000
+    networks:
+      - backend
+    labels:
+      - traefik.enable=false
+
+  tour-backend:
+    image: quay.io/datawire/tour:backend-0.2.6
+    expose:
+      - 8080
+    networks:
+      - backend
+    labels:
+      - traefik.enable=false
+
+  auth:
+    image: datawire/ambassador-auth-service:latest
+    expose:
+      - 3000
+    networks:
+      - backend
+    labels:
+      - traefik.enable=false
+
+  tracing:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    expose:
+      - 5775
+      - 6831
+      - 6832
+      - 5778
+      - 16686
+      - 14268
+      - 9411
+    labels:
+      - "traefik.backend=tracing"
+      - "traefik.frontend.rule=Host:tracing.local.test"
+      - "traefik.port=16686"
+
+  ### ELASTICSEARCH ########################################
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    restart: unless-stopped
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - cluster.name=fusionauth
+      - node.name=fusionauth-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=${ELASTICSEARCH_JAVA_OPTS}"
+      - cluster.initial_master_nodes=fusionauth-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # Un-comment to access the search service directly
+    # ports:
+    # - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
+    # - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
+    networks:
+      - frontend
+      - backend
+    labels:
+      - "traefik.backend=${TB_ELASTICSEARCH}"
+      - "traefik.frontend.rule=Host:${ELASTICSEARCH_HOST_URL}"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
+      - "traefik.port=${ELASTICSEARCH_HOST_HTTP_PORT}"
+
+  ### FUSIONAUTH ########################################
+  fusionauth:
+    image: fusionauth/fusionauth-app:latest
+    restart: unless-stopped
+    volumes:
+      - fusionauth:/usr/local/fusionauth/config
+    environment:
+      DATABASE_URL: "${API_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${API_DATABASE_NAME}"
+      DATABASE_ROOT_USER: ${API_DATABASE_ROOT_USER}
+      DATABASE_ROOT_PASSWORD: ${API_DATABASE_ROOT_PASSWORD}
+      DATABASE_USER: ${API_DATABASE_USER}
+      DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
+      FUSIONAUTH_MEMORY: ${FUSIONAUTH_MEMORY}
+      FUSIONAUTH_SEARCH_SERVERS: http://elasticsearch:9200
+      FUSIONAUTH_URL: http://fusionauth:9011
+    depends_on:
+      - ${API_DATABASE_CLIENT}
+      - elasticsearch
+    networks:
+      - frontend
+      - backend
+    # ports:
+    # - "9011:${FUSIONAUTH_CONTAINER_PORT}"
+    labels:
+      - "traefik.backend=${TB_ELASTICSEARCH}"
+      - "traefik.frontend.rule=Host:${ELASTICSEARCH_HOST_URL}"
+      - "traefik.docker.network=${COMPOSE_PROJECT_NAME}_frontend"
+      - "traefik.port=${FUSIONAUTH_CONTAINER_PORT}"
