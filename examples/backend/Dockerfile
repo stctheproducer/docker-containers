@@ -15,10 +15,10 @@ RUN npm i -g @adonisjs/cli
 USER node
 
 # copy 'package.json'
-COPY --chown=node:node ./package.json ./
+COPY --chown=node:node ./package.json ./yarn.lock ./
 
 # install project dependencies
-RUN yarn
+RUN  yarn install --production
 
 COPY --chown=node:node . .
 

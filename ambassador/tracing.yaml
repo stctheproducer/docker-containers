@@ -1,0 +1,6 @@
+---
+apiVersion: ambassador/v2
+kind: TracingService
+name: tracing
+service: tracing:9411
+driver: zipkin

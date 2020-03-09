@@ -1,0 +1,8 @@
+---
+apiVersion: ambassador/v1
+kind: Module
+name: ambassador
+config:
+  diagnostics:
+  # Stop the diagnostics endpoint from being publicly available
+  enabled: true
