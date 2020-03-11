@@ -64,8 +64,7 @@ services:
     depends_on:
       - ${API_DATABASE_CLIENT}
     networks:
-      # Enable if not using the ambassador service as an api gateway
-      # - frontend
+      - frontend
       - backend
     # labels:
     # - traefik.enable=true
@@ -368,29 +367,8 @@ services:
       - ${TRAEFIK_HOST_HTTPS_PORT}:443
     networks:
       - frontend
-      # Disable if not using ambassador API gateway
-      # - backend
     depends_on:
       - socket-proxy
-    labels:
-      - traefik.enable=true
-
-  ### AMBASSADOR #########################################
-  ambassador:
-    depends_on:
-      - traefik
-    image: quay.io/datawire/aes:1.2.2
-    # Enable demo application
-    # command: --demo
-    volumes:
-      - ./ambassador:/ambassador/ambassador-config
-    environment:
-      # don't try to watch Kubernetes for configuration changes
-      - AMBASSADOR_NO_KUBEWATCH=no_kubewatch
-    networks:
-      - backend
-    expose:
-      - 8080
     labels:
       - traefik.enable=true
 

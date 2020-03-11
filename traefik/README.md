@@ -1,4 +1,14 @@
-# Basic Web Authentication
+# Configurations
+
+## Proxy Network
+
+Make sure the proxy network is created as it is needed fro Traefik. Run the command:
+
+```bash
+docker network create --internal proxy
+```
+
+## Basic Web Authentication
 
 To create a secure web authentication password use the `htpasswd` command. On Ubuntu, it can be installed using the following command.
 

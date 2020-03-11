@@ -1,7 +1,0 @@
-
-ambassador.yaml
-auth.yaml
-mapping-diag.yaml
-mapping-httpbin.yaml
-mapping-tour.yaml
-tracing.yaml
