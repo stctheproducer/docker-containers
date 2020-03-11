@@ -109,7 +109,7 @@ providers:
 
   file:
     # Enable the file provider to define routers / middlewares / services in file
-    directory: /config
+    directory: /etc/traefik/dynamic
     watch: true
     debugLogGeneratedTemplate: true
 
