@@ -1,0 +1,98 @@
+global:
+  checkNewVersion: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  mysql:
+    address: ":3306"
+  metrics:
+    address: ":8082"
+
+api:
+  dashboard: true
+  insecure: false
+  debug: false
+
+providers:
+  providersThrottleDuration: 10s
+  docker:
+    endpoint: "tcp://socket-proxy:2375"
+    defaultRule: 'Host(`{{ index .Labels "com.get.host.url"}}`) || Host(`{{ normalize .Name }}.local.test`)'
+    network: local_frontend
+    exposedByDefault: false
+  file:
+    # Enable the file provider to define routers / middlewares / services in file
+    directory: /config
+    watch: true
+
+log:
+  level: ERROR
+  filePath: /logs/traefik.json
+  format: json
+
+certificateResolvers:
+  # Note that Let's Encrypt API has rate limiting.
+  #
+  # Use Let's Encrypt staging server with the caServer
+  # configuration option when experimenting to avoid hitting
+  # this limit too fast.
+  letsEncryptDns:
+    acme:
+      email: email@address.com
+      #  Staging Server
+      caServer: https://acme-staging-v02.api.letsencryptorg/directory"
+      # Producction server
+      # caServer: https://acme-v02.api.letsencrypt.org/directory
+      storage: /etc/traefik/acme/acme.json
+      onHostRule: true
+      dnsChallenge:
+        provider: namecheap
+        delayBeforeCheck: 42
+
+  letsEncryptHttp:
+    acme:
+      email: email@address.com
+      #  Staging Server
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Producction server
+      # caServer: https://acme-v02.api.letsencrypt.org/directory
+      storage: /etc/traefik/acme/acme.json
+      entryPoint: https
+      onHostRule: true
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
+
+  letsEncryptTls:
+    acme:
+      email: email@address.com
+      #  Staging Server
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Producction server
+      # caServer: https://acme-v02.api.letsencrypt.org/directory
+      storage: /etc/traefik/acme/acme.json
+      entryPoint: https
+      onHostRule: true
+      httpChallenge:
+        # used during the challenge
+        entryPoint: websecure
+      tlsChallenge: {}
+
+  letsEncryptDnsCustom:
+    acme:
+      email: email@address.com
+      #  Staging Server
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Producction server
+      # caServer: https://acme-v02.api.letsencrypt.org/directory
+      storage: /etc/traefik/acme/acme.json
+      onHostRule: true
+      dnsChallenge:
+        provider: namecheap
+        delayBeforeCheck: 42
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"

@@ -1,0 +1,37 @@
+global:
+  checkNewVersion: true
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  mysql:
+    address: ":3306"
+  metrics:
+    address: ":8082"
+
+api:
+  dashboard: true
+  insecure: true
+  debug: true
+
+providers:
+  providersThrottleDuration: 10s
+  docker:
+    endpoint: "tcp://socket-proxy:2375"
+    defaultRule: 'Host(`{{ index .Labels "com.get.host.url"}}`) || Host(`{{ normalize .Name }}.local.test`)'
+    network: local_frontend
+    exposedByDefault: false
+  file:
+    # Enable the file provider to define routers / middlewares / services in file
+    directory: /config
+    watch: true
+
+accessLog:
+  filePath: /logs/access_log.log
+  bufferingSize: 1000
+
+log:
+  level: DEBUG
+  filePath: /logs/traefik.log

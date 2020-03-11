@@ -1,0 +1,8 @@
+tcp:
+  routers:
+    mysql:
+      entryPoints:
+        - "mysql"
+      # Catch every request (only available rule for non-tls routers. See below.)
+      rule: "HostSNI(`*`)"
+      service: mysql
