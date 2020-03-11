@@ -1,0 +1,11 @@
+middlewares:
+  auth:
+    basicAuth:
+      users:
+        - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+        - "test2:$apr1$d9hr9HBB$4HxwgUir3HP4EsggP/Q"
+      usersFile: "/auth/get/users"
+      realm: "MyRealm"
+      headerField: "X-WebAuth-User"
+      # Default: false
+      removeHeader: true

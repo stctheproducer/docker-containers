@@ -1,0 +1,26 @@
+# Dynamic Configuration
+http:
+  routers:
+    api:
+      rule: "Host(`tk.local.test`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`) || PathPrefix(`/debug`))"
+      entrypoints:
+        - websecure
+      service: api@internal
+      middlewares:
+        - auth
+      tls:
+        certResolver: letsEncryptDns
+        domains:
+          - main: "local.test"
+            sans: "*.local.test"
+
+  middlewares:
+    auth:
+      basicAuth:
+        users:
+          - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+          - "test2:$apr1$d9hr9HBB$4HxwgUir3HP4EsggP/Q"
+        usersFile: "/auth/get/users"
+        realm: "MyRealm"
+        headerField: "X-WebAuth-User"
+        

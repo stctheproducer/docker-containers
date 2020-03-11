@@ -1,0 +1,185 @@
+http:
+  routers:
+    authors:
+      # won't listen to entry point web
+      entryPoints:
+        # - web
+        - websecure
+      rule: "Host(`company.com`) && Path(`/blog`)" # 'Host(`{{ env "MS_ONE_HOST_URL" }}`)'
+      # rule: "Host(`company.com`) && Path(`/blog`) || Host(`blog.company.org`)"
+      # rule: 'Host(`{{ env "MS_ONE_HOST_URL" }}`)'
+      #
+      # A value of 0 is ignored
+      priority: 0
+
+      # It is important to note that the Server Name Indication is an
+      # extension of the TLS protocol. Hence, only TLS routers will be
+      # able to specify a domain name with that rule. However, non-TLS
+      # routers will have to explicitly use that rule with * (every
+      # domain) to state that every non-TLS request will be handled by
+      # the router.
+      # rule: "HostSNI(`traefik.io`)"
+      middlewares:
+        - authentication
+      service: '{{ env "SERVICE_NAME_MS_ONE" }}'
+      # will route TLS requests (and ignore non tls requests)
+      tls: # {}
+        certResolver: letsEncryptDns
+        domains:
+          - main: "company.org" # '{{ env "TRAEFIK_MAIN_DOMAIN" }}'
+            sans:
+              - "*.company.org" # '{{ env "TRAEFIK_SANS_DOMAIN" }}'
+
+  services:
+    app:
+      weighted:
+        services:
+          - name: appv1
+            weight: 3
+          - name: appv2
+            weight: 1
+    mirrored-api:
+      mirroring:
+        service: appv1
+        mirrors:
+          - name: appv2
+            percent: 10
+    authors:
+      loadBalancer:
+        servers:
+          - url: "http://<private-ip-server-1>:<private-port-server-1>/"
+          - url: "http://<private-ip-server-2>:<private-port-server-2>/"
+
+# If both HTTP routers and TCP routers listen to the same entry
+# points, the TCP routers will apply before the HTTP routers. If no
+# matching route is found for the TCP routers, then the HTTP routers
+# will take over.
+tcp:
+  # TCP routers can only target TCP services (not HTTP services).
+  routers:
+    Router-1:
+      entryPoints:
+        - "websecure"
+      rule: "HostSNI(`traefik.io`)"
+      service: "service-1"
+
+      # will route TLS requests (and ignore non tls requests)
+      tls: # {}
+        passthrough: true
+        certResolver: letsEncryptDns
+        domains:
+          - main: '{{ env "TRAEFIK_MAIN_DOMAIN" }}'
+            sans:
+              - '{{ env "TRAEFIK_SANS_DOMAIN" }}'
+        options: option0
+
+  services:
+    authors:
+      loadBalancer:
+        responseForwarding:
+          flushInterval: 1s
+        # Default: true
+        passHostHeader: false
+        healthCheck:
+          path: /health
+          headers:
+            My-Custom-Header: foo
+            My-Header: bar
+          scheme: http
+          port: 8080
+          interval: "10s"
+          timeout: "3s"
+        sticky:
+          cookie: # {}
+            name: my_sticky_cookie_name
+            secure: true
+            httpOnly: true
+        servers:
+          - address: "<private-ip-server-1>:<private-port-server-1>"
+          - address: "<private-ip-server-2>:<private-port-server-2>"
+
+    my-service:
+      loadBalancer:
+        terminationDelay: 200
+        servers:
+          - address: "xx.xx.xx.xx:xx"
+          - address: "xx.xx.xx.xx:xx"
+
+    app:
+      weighted:
+        services:
+          - name: appv1
+            weight: 3
+          - name: appv2
+            weight: 1
+
+    appv1:
+      loadBalancer:
+        servers:
+          - address: "xxx.xxx.xxx.xxx:8080"
+
+    appv2:
+      loadBalancer:
+        servers:
+          - address: "xxx.xxx.xxx.xxx:8080"
+
+tls:
+  certificates:
+    - certFile: /path/to/domain.cert
+      keyFile: /path/to/domain.key
+      stores:
+        - default
+      # Note that since no store is defined,
+      # the certificate below will be stored in the `default` store.
+    - certFile: /path/to/other-domain.cert
+      keyFile: /path/to/other-domain.key
+  stores:
+    default: # {}
+      defaultCertificate:
+        certFile: path/to/cert.crt
+        keyFile: path/to/cert.key
+
+  options:
+    option0:
+      default:
+        minVersion: VersionTLS12
+        maxVersion: VersionTLS13
+        curvePreferences:
+          - CurveP521
+          - CurveP384
+        sniStrict: true
+        clientAuth:
+          # in PEM format. each file can contain multiple CAs.
+          caFiles:
+            - tests/clientca1.crt
+            - tests/clientca2.crt
+
+          # NoClientCert: disregards any client certificate.
+          # RequestClientCert: asks for a certificate but proceeds anyway if none is
+          # provided.
+          # RequireAnyClientCert: requires a certificate but does not verify if it is
+          # signed by a CA listed in clientAuth.caFiles.
+          # VerifyClientCertIfGiven: if a certificate is provided, verifies if it is
+          # signed by a CA listed in clientAuth.caFiles. Otherwise proceeds without any
+          # certificate.
+          # RequireAndVerifyClientCert: requires a certificate, which must be signed by
+          # a CA listed in clientAuth.caFiles.
+          clientAuthType: RequireAndVerifyClientCert
+
+      mintls13:
+        minVersion: VersionTLS13
+
+      maxtls12:
+        maxVersion: VersionTLS12
+
+      # Cipher suites defined for TLS 1.2 and below cannot be used in TLS 1.3, and
+      # vice versa. (https://tools.ietf.org/html/rfc8446)
+      # With TLS 1.3, the cipher suites are not configurable (all supported cipher
+      # suites are safe in this case). https://golang.org/doc/go1.12#tls_1_3
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
