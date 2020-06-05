@@ -20,9 +20,9 @@ providers:
   providersThrottleDuration: 10s
   docker:
     endpoint: "tcp://socket-proxy:2375"
-    defaultRule: 'Host(`{{ index .Labels "com.get.host.url"}}`) || Host(`{{ normalize .Name }}.local.test`)'
     network: local_frontend
     exposedByDefault: false
+    watch: true
   file:
     # Enable the file provider to define routers / middlewares / services in file
     directory: /etc/traefik/dynamic
@@ -33,7 +33,7 @@ log:
   filePath: /logs/traefik.json
   format: json
 
-certificateResolvers:
+certificatesResolvers:
   # Note that Let's Encrypt API has rate limiting.
   #
   # Use Let's Encrypt staging server with the caServer
@@ -47,7 +47,6 @@ certificateResolvers:
       # Producction server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
-      onHostRule: true
       dnsChallenge:
         provider: namecheap
         delayBeforeCheck: 42
@@ -61,7 +60,6 @@ certificateResolvers:
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
       entryPoint: https
-      onHostRule: true
       httpChallenge:
         # used during the challenge
         entryPoint: web
@@ -75,7 +73,6 @@ certificateResolvers:
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
       entryPoint: https
-      onHostRule: true
       httpChallenge:
         # used during the challenge
         entryPoint: websecure
@@ -89,7 +86,6 @@ certificateResolvers:
       # Producction server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
-      onHostRule: true
       dnsChallenge:
         provider: namecheap
         delayBeforeCheck: 42

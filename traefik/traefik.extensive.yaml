@@ -77,6 +77,8 @@ api:
 providers:
   providersThrottleDuration: 10s
   docker:
+    swarmMode: true
+    swarmModeRefreshSeconds: 30s
     # Docker server endpoint. Can be a tcp or a unix socket endpoint.
     #
     # Required
@@ -89,7 +91,6 @@ providers:
     # Default: "Host(`{{ normalize .Name }}`)"
     #
     # defaultRule: "Host(`{{ normalize .Name }}.local.test`)"
-    defaultRule: 'Host(`{{ index .Labels "com.get.host.url"}}`)'
 
     # Secure connection certificates
     # tls:
@@ -106,6 +107,7 @@ providers:
     network: local_frontend
     exposedByDefault: false
     useBindPortIP: true
+    watch: true
 
   file:
     # Enable the file provider to define routers / middlewares / services in file
@@ -113,6 +115,13 @@ providers:
     watch: true
     debugLogGeneratedTemplate: true
 
+  consulCatalog:
+    refreshInterval: 30s
+    endpoint:
+      address: http://consul:8500
+      scheme: https
+    prefix: traefik
+    exposedByDefault: false
 ################################################################
 # Traefik logs configuration
 ################################################################
