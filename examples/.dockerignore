@@ -32,29 +32,6 @@
 *.out
 *.pid
 
-
-############################
-# Logs and databases
-############################
-
-.tmp
-*.log
-*.sql
-*.sqlite
-*.sqlite3
-
-
-############################
-# Misc.
-############################
-
-*#
-ssl
-.idea
-nbproject
-public/uploads/*
-!public/uploads/.gitkeep
-
 ############################
 # Node.js
 ############################
@@ -71,6 +48,30 @@ node_modules
 .env.production
 .env.staging
 
+############################
+# Misc.
+############################
+
+*#
+ssl
+.idea
+nbproject
+public/uploads/*
+!public/uploads/.gitkeep
+.gitignore
+.prettierrc
+.prettierrc.js
+.eslintrc.json
+
+############################
+# Logs and databases
+############################
+
+.tmp
+*.log
+*.sql
+*.sqlite
+*.sqlite3
 
 ############################
 # Tests

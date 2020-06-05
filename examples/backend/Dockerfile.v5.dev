@@ -1,0 +1,23 @@
+FROM node:lts-alpine
+
+# make the '/usr/api' folder the current working directory
+WORKDIR /usr/api
+
+# Change ownership of work directory for good measure
+RUN chown -R node:node /usr/api
+
+# switch to non-root user
+USER node
+
+# copy 'package.json'
+COPY --chown=node:node ./package.json ./yarn.lock ./
+
+# install project dependencies
+RUN yarn
+
+# copy project files and folders to the current working directory
+COPY --chown=node:node . .
+
+EXPOSE 3333
+
+CMD ["node", "ace", "serve", "--watch"]
