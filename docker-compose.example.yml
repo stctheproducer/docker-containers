@@ -1,4 +1,4 @@
-version: 3.6
+version: "3.7"
 
 networks:
   frontend:
@@ -6,13 +6,7 @@ networks:
   backend:
     driver: ${NETWORKS_DRIVER}
   proxy:
-    external: true
-
-secrets:
-  namecheap_user:
-    file: "./secrets/namecheap_user.secret"
-  namecheap_api_key:
-    file: "./secrets/namecheap_api_key.secret"
+    driver: ${NETWORKS_DRIVER}
 
 volumes:
   mysql:
@@ -34,20 +28,27 @@ volumes:
 
 services:
   ### Application ################################################
-  # frontend:
-  #   restart: always
-  #   build:
-  #     context: ../frontend/
-  #   volumes:
-  #     - ${APP_CODE_PATH_CONTAINER}/app/node_modules
-  #     - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
-  #   env_file: ../frontend/.env
-  #   depends_on:
-  #     - traefik
-  #   networks:
-  #     - frontend
-  #   labels:
-  #     - traefik.enable=true
+  frontend:
+    restart: always
+    build:
+      context: ../frontend/
+    volumes:
+      - ${APP_CODE_PATH_CONTAINER}/app/node_modules
+      - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
+    env_file: ../frontend/.env
+    depends_on:
+      - traefik
+    networks:
+      - frontend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`frontend.local.test`)
+      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.services.frontend.loadbalancer.server.port=3000
+      - traefik.http.routers.frontend.middlewares=auth
+      - traefik.http.middlewares.auth.basicauth.users=test:xxx
+      - traefik.http.routers.frontend.tls.certresolver=letsEncryptDns
+      - traefik.http.routers.frontend.entrypoints=websecure
 
   ################################################
   ## Adonis Microservices ################################################
@@ -66,8 +67,6 @@ services:
     networks:
       - frontend
       - backend
-    # labels:
-    # - traefik.enable=true
 
   ## GRAPHQL API ################################################
 
@@ -93,8 +92,6 @@ services:
       - frontend
     depends_on:
       - prisma
-    # labels:
-    # - traefik.enable=true
 
   ## PRISMA ################################################
   prisma:
@@ -133,8 +130,6 @@ services:
     networks:
       - frontend
       - backend
-    # labels:
-    # - traefik.enable=true
 
   ## STRAPI ################################################
   strapi:
@@ -159,8 +154,6 @@ services:
     volumes:
       - ${APP_CODE_PATH_CONTAINER}/api/node_modules
       - ./strapi:${APP_CODE_PATH_CONTAINER}/api
-    # labels:
-    # - traefik.enable=true
 
   ### MySQL ################################################
   mysql:
@@ -236,6 +229,22 @@ services:
     networks:
       - backend
 
+    ### MongoWebUI ################################################
+    mongo-webui:
+      image: mongoclient/mongoclient
+      environment:
+        - ROOT_URL=${MONGO_WEBUI_ROOT_URL}
+        - MONGO_URL=${MONGO_WEBUI_MONGO_URL}
+        - INSTALL_MONGO=${MONGO_WEBUI_INSTALL_MONGO}
+      volumes:
+        - ${DATA_PATH_HOST}/mongo-webui:/data/db
+      ports:
+        - "${MONGO_WEBUI_PORT}:3000"
+      networks:
+        - backend
+      depends_on:
+        - mongo
+
   ### Mongo Express ##############################################
   mongo-express:
     depends_on:
@@ -254,8 +263,6 @@ services:
       ME_CONFIG_MONGODB_AUTH_DATABASE: ${API_DATABASE_AUTHENTICATION_DATABASE}
       ME_CONFIG_MONGODB_AUTH_USERNAME: ${API_DATABASE_USER}
       ME_CONFIG_MONGODB_AUTH_PASSWORD: ${API_DATABASE_PASSWORD}
-    # labels:
-    # - traefik.enable=true
 
   ### Jenkins ###################################################
   jenkins:
@@ -272,8 +279,6 @@ services:
     networks:
       - frontend
       - backend
-    # labels:
-    # - traefik.enable=true
 
   ### Webhook ###################################################
   webhook:
@@ -284,8 +289,6 @@ services:
       - ${APP_CODE_PATH_HOST}:/opt/deploy
     networks:
       - frontend
-    # labels:
-    # - traefik.enable=true
 
   ### Adminer ################################################
   adminer:
@@ -298,8 +301,6 @@ services:
     networks:
       - frontend
       - backend
-    # labels:
-    # - traefik.enable=true
 
   ### Redis ################################################
   redis:
@@ -333,8 +334,6 @@ services:
       - backend
     depends_on:
       - redis
-    # labels:
-    #   - traefik.enable=true
 
   ### TRAEFIK #########################################
   socket-proxy:
@@ -354,12 +353,9 @@ services:
         - TRAEFIK_VERSION=${TRAEFIK_VERSION}
     restart: always
     env_file: ./traefik/.env
-    secrets:
-      - namecheap_user
-      - namecheap_api_key
     volumes:
       - ./traefik/acme:/etc/traefik/acme
-      - ./traefik/traefik.yaml:/traefik.yml
+      - ./traefik/traefik.yaml:/traefik.yaml
       - ./traefik/dynamic/:/etc/traefik/dynamic
       - ./traefik/certs:/certs
     ports:
@@ -367,6 +363,7 @@ services:
       - ${TRAEFIK_HOST_HTTPS_PORT}:443
     networks:
       - frontend
+      - proxy
     depends_on:
       - socket-proxy
     labels:
@@ -398,8 +395,6 @@ services:
     networks:
       - frontend
       - backend
-    labels:
-      - traefik.enable=true
 
   ### FUSIONAUTH ########################################
   fusionauth:
@@ -424,5 +419,3 @@ services:
       - backend
     # ports:
     # - 9011:${FUSIONAUTH_CONTAINER_PORT}
-    labels:
-      - traefik.enable=true

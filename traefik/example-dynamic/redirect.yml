@@ -6,14 +6,14 @@ http:
       middlewares:
         - https_redirect
       rule: "HostRegexp(`{any:.+}`)"
-      # service: noop
+      service: noop
 
   services:
     # noop service, the URL will be never called
-    # noop:
-    # loadBalancer:
-    # servers:
-    # - url: http://192.168.0.1:1337
+    noop:
+    loadBalancer:
+    servers:
+      - url: http://192.168.0.1:1337
 
   middlewares:
     https_redirect:
