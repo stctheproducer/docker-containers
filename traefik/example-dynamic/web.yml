@@ -1,0 +1,30 @@
+http:
+  routers:
+    web:
+      entryPoints:
+        - web
+      rule: "Host(`dashboard.local.test`)"
+      service: web
+
+  services:
+    # noop service, the URL will be never called
+    web:
+      loadBalancer:
+        servers:
+          - url: http://192.168.0.1:3333
+
+tcp:
+  routers:
+    uiDev:
+      entryPoints:
+        - websecure
+      service: uiDev
+      rule: "HostSNI(`dev.bwino.io`)"
+      tls:
+        passthrough: true
+        certResolver: letsEncryptTls
+  services:
+    uiDev:
+      loadBalancer:
+        servers:
+          - address: http://192.168.0.1:3333

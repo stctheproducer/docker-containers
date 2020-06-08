@@ -67,6 +67,15 @@ services:
     networks:
       - frontend
       - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authors.rule=Host(`authors.local.test`)
+      - traefik.http.routers.authors.entrypoints=web
+      - traefik.http.services.authors.loadbalancer.server.port=3333
+      # - traefik.http.routers.authors.middlewares=auth
+      # - traefik.http.middlewares.auth.basicauth.users=test:xxx
+      # - traefik.http.routers.authors.tls.certresolver=letsEncryptDns
+      # - traefik.http.routers.authors.entrypoints=websecure
 
   ## GRAPHQL API ################################################
 
@@ -493,17 +502,22 @@ services:
     volumes:
       - fusionauth:/usr/local/fusionauth/config
     environment:
-      DATABASE_URL: ${API_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${API_DATABASE_NAME}
-      DATABASE_ROOT_USER: ${API_DATABASE_ROOT_USER}
-      DATABASE_ROOT_PASSWORD: ${API_DATABASE_ROOT_PASSWORD}
+      # DATABASE_URL: ${API_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${API_DATABASE_NAME}
+      # DATABASE_ROOT_USER: ${API_DATABASE_ROOT_USER}
+      # DATABASE_ROOT_PASSWORD: ${API_DATABASE_ROOT_PASSWORD}
       DATABASE_USER: ${API_DATABASE_USER}
       DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
       FUSIONAUTH_MEMORY: ${FUSIONAUTH_MEMORY}
-      FUSIONAUTH_SEARCH_SERVERS: http://elasticsearch:9200
-      FUSIONAUTH_URL: http://fusionauth:9011
+      # FUSIONAUTH_SEARCH_SERVERS: ${FUSIONAUTH_SEARCH_SERVERS}
+      # FUSIONAUTH_SEARCH_ENGINE_TYPE: elasticsearch
+      FUSIONAUTH_HTTP_PORT: ${FUSIONAUTH_HTTP_PORT}
+      FUSIONAUTH_HTTPS_PORT: ${FUSIONAUTH_HTTPS_PORT}
+      FUSIONAUTH_RUNTIME_MODE: ${FUSIONAUTH_RUNTIME_MODE}
+      FUSIONAUTH_URL: ${FUSIONAUTH_URL}
     depends_on:
       - ${API_DATABASE_CLIENT}
       - elasticsearch
+      - traefik
     networks:
       - frontend
       - backend
@@ -513,7 +527,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.fusionauth.rule=Host(`auth.local.test`)
       - traefik.http.routers.fusionauth.entrypoints=web
-      - traefik.http.services.fusionauth.loadbalancer.server.port=${FUSIONAUTH_CONTAINER_PORT}
+      - traefik.http.services.fusionauth.loadbalancer.server.port=${FUSIONAUTH_HTTP_PORT}
       # - traefik.http.routers.fusionauth.middlewares=auth
       # - traefik.http.middlewares.auth.basicauth.users=test:xxx
       # - traefik.http.routers.fusionauth.tls.certresolver=letsEncryptDns
