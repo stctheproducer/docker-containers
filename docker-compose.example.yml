@@ -383,6 +383,26 @@ services:
       # - traefik.http.routers.adminer.tls.certresolver=letsEncryptDns
       # - traefik.http.routers.adminer.entrypoints=websecure
 
+  ### PHPMyAdmin ################################################
+  phpmyadmin:
+    depends_on:
+      - ${API_DATABASE_HOST}
+    image: phpmyadmin/phpmyadmin:latest
+    # ports:
+    # - "8081:80"
+    networks:
+      - frontend
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.local.test`)
+      - traefik.http.routers.phpmyadmin.entrypoints=web
+      - traefik.http.services.phpmyadmin.loadbalancer.server.port=${PHPMYADMIN_CONTAINER_PORT}
+      # - traefik.http.routers.phpmyadmin.middlewares=auth
+      # - traefik.http.middlewares.auth.basicauth.users=test:xxx
+      # - traefik.http.routers.phpmyadmin.tls.certresolver=letsEncryptDns
+      # - traefik.http.routers.phpmyadmin.entrypoints=websecure
+
   ### Redis ################################################
   redis:
     build: ./redis
