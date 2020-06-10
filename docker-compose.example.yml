@@ -366,7 +366,7 @@ services:
   adminer:
     depends_on:
       - ${API_DATABASE_HOST}
-    image: adminer:4.7.3-standalone
+    image: adminer:latest
     restart: unless-stopped
     environment:
       - ADMINER_DESIGN=${ADMINER_DESIGN}
@@ -383,7 +383,7 @@ services:
       # - traefik.http.routers.adminer.tls.certresolver=letsEncryptDns
       # - traefik.http.routers.adminer.entrypoints=websecure
 
-  ### PHPMyAdmin ################################################
+  ### phpMyAdmin ################################################
   phpmyadmin:
     depends_on:
       - ${API_DATABASE_HOST}
@@ -395,13 +395,38 @@ services:
       - backend
     labels:
       - traefik.enable=true
-      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.local.test`)
-      - traefik.http.routers.phpmyadmin.entrypoints=web
-      - traefik.http.services.phpmyadmin.loadbalancer.server.port=${PHPMYADMIN_CONTAINER_PORT}
-      # - traefik.http.routers.phpmyadmin.middlewares=auth
+      - traefik.http.routers.pma.rule=Host(`pma.local.test`)
+      - traefik.http.routers.pma.entrypoints=web
+      - traefik.http.services.pma.loadbalancer.server.port=${PHPMYADMIN_CONTAINER_PORT}
+      # - traefik.http.routers.pma.middlewares=auth
       # - traefik.http.middlewares.auth.basicauth.users=test:xxx
-      # - traefik.http.routers.phpmyadmin.tls.certresolver=letsEncryptDns
-      # - traefik.http.routers.phpmyadmin.entrypoints=websecure
+      # - traefik.http.routers.pma.tls.certresolver=letsEncryptDns
+      # - traefik.http.routers.pma.entrypoints=websecure
+
+  ### pgAdmin ################################################
+  pgadmin:
+    depends_on:
+      - ${API_DATABASE_HOST}
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+      - PGADMIN_LISTEN_ADDRESS=${PGADMIN_LISTEN_ADDRESS}
+      - PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}
+    # ports:
+    # - "80:80"
+    networks:
+      - frontend
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pg.rule=Host(`pg.local.test`)
+      - traefik.http.routers.pg.entrypoints=web
+      - traefik.http.services.pg.loadbalancer.server.port=${PGADMIN_CONTAINER_PORT}
+      # - traefik.http.routers.pg.middlewares=auth
+      # - traefik.http.middlewares.auth.basicauth.users=test:xxx
+      # - traefik.http.routers.pg.tls.certresolver=letsEncryptDns
+      # - traefik.http.routers.pg.entrypoints=websecure
 
   ### Redis ################################################
   redis:
