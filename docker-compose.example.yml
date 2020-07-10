@@ -9,6 +9,8 @@ networks:
     driver: ${NETWORKS_DRIVER}
 
 volumes:
+  strapi:
+    driver: ${VOLUMES_DRIVER}
   mysql:
     driver: ${VOLUMES_DRIVER}
   mariadb:
@@ -162,25 +164,24 @@ services:
   strapi:
     depends_on:
       - ${API_DATABASE_CLIENT}
-    build:
-      context: ./strapi
+    image: strapi/strapi
     restart: unless-stopped
     networks:
       - frontend
       - backend
-    # env_file: ./strapi/.env
     environment:
+      - DATABASE_CLIENT=${API_DATABASE_CLIENT}
+      - DATABASE_NAME=${API_DATABASE_NAME}
       - DATABASE_HOST=${API_DATABASE_HOST}
       - DATABASE_PORT=${API_DATABASE_PORT}
-      - DATABASE_SRV=${API_DATABASE_SRV}
-      - DATABASE_NAME=${API_DATABASE_NAME}
       - DATABASE_USERNAME=${API_DATABASE_USER}
       - DATABASE_PASSWORD=${API_DATABASE_PASSWORD}
-      - DATABASE_SSL=${API_DATABASE_SSL}
-      - DATABASE_AUTHENTICATION_DATABASE=${API_DATABASE_AUTHENTICATION_DATABASE}
+      # Mongo
+      # - DATABASE_SRV=${API_DATABASE_SRV}
+      # - DATABASE_SSL=${API_DATABASE_SSL}
+      # - DATABASE_AUTHENTICATION_DATABASE=${API_DATABASE_AUTHENTICATION_DATABASE}
     volumes:
-      - ${APP_CODE_PATH_CONTAINER}/api/node_modules
-      - ./strapi:${APP_CODE_PATH_CONTAINER}/api
+      - ${DATA_PATH_HOST}/strapi:/srv/app
     labels:
       - traefik.enable=true
       - traefik.http.routers.strapi.rule=Host(`strapi.local.test`)
