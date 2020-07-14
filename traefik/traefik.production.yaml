@@ -44,7 +44,7 @@ certificatesResolvers:
       email: email@address.com
       #  Staging Server
       caServer: https://acme-staging-v02.api.letsencryptorg/directory"
-      # Producction server
+      # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
       dnsChallenge:
@@ -55,11 +55,10 @@ certificatesResolvers:
     acme:
       email: email@address.com
       #  Staging Server
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
-      # Producction server
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
-      entryPoint: https
       httpChallenge:
         # used during the challenge
         entryPoint: web
@@ -68,11 +67,10 @@ certificatesResolvers:
     acme:
       email: email@address.com
       #  Staging Server
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
-      # Producction server
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
-      entryPoint: https
       httpChallenge:
         # used during the challenge
         entryPoint: websecure
@@ -82,8 +80,8 @@ certificatesResolvers:
     acme:
       email: email@address.com
       #  Staging Server
-      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
-      # Producction server
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json
       dnsChallenge:

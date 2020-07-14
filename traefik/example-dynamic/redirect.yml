@@ -1,23 +1,20 @@
 http:
   routers:
-    http_catchall:
+    redirecttohttps:
       entryPoints:
         - web
       middlewares:
-        - https_redirect
-      rule: "HostRegexp(`{any:.+}`)"
+        - httpsredirect
+      rule: "HostRegexp(`{host:.+}`)"
       service: noop
 
   services:
-    # noop service, the URL will be never called
     noop:
-    loadBalancer:
-    servers:
-      - url: http://192.168.0.1:1337
+      loadBalancer:
+        servers:
+          - url: "http://192.168.53.1"
 
   middlewares:
-    https_redirect:
+    httpsredirect:
       redirectScheme:
         scheme: https
-        permanent: true
-        port: 443
