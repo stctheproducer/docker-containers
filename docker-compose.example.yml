@@ -71,7 +71,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.authors.rule=Host(`authors.local.test`)"
-      - "traefik.http.routers.authors.entrypoints=web"
+      - "traefik.http.routers.authors.entrypoints=web, websecure"
       - "traefik.http.services.authors.loadbalancer.server.port=3333"
       - "traefik.http.routers.authors.middlewares=auth"
       - "traefik.http.routers.authors.tls.certresolver=letsEncryptDnsCustom"
@@ -103,7 +103,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.graph.rule=Host(`graph.local.test`)"
-      - "traefik.http.routers.graph.entrypoints=web"
+      - "traefik.http.routers.graph.entrypoints=web, websecure"
       - "traefik.http.services.graph.loadbalancer.server.port=${GRAPHQL_CONTAINER_PORT}"
       - "traefik.http.routers.graph.middlewares=auth"
       - "traefik.http.routers.graph.tls.certresolver=letsEncryptDnsCustom"
@@ -148,7 +148,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prisma.rule=Host(`prisma.local.test`)"
-      - "traefik.http.routers.prisma.entrypoints=web"
+      - "traefik.http.routers.prisma.entrypoints=web, websecure"
       - "traefik.http.services.prisma.loadbalancer.server.port=${PRISMA_CONTAINER_PORT}"
       - "traefik.http.routers.prisma.middlewares=auth"
       - "traefik.http.routers.prisma.tls.certresolver=letsEncryptDnsCustom"
@@ -178,7 +178,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.strapi.rule=Host(`strapi.local.test`)"
-      - "traefik.http.routers.strapi.entrypoints=web"
+      - "traefik.http.routers.strapi.entrypoints=web, websecure"
       - "traefik.http.services.strapi.loadbalancer.server.port=${STRAPI_CONTAINER_PORT}"
       - "traefik.http.routers.strapi.middlewares=auth"
       - "traefik.http.routers.strapi.tls.certresolver=letsEncryptDnsCustom"
@@ -275,7 +275,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mongo.rule=Host(`mongo.local.test`)"
-      - "traefik.http.routers.mongo.entrypoints=web"
+      - "traefik.http.routers.mongo.entrypoints=web, websecure"
       - "traefik.http.services.mongo.loadbalancer.server.port=${MONGO_WEBUI_PORT}"
       - "traefik.http.routers.mongo.middlewares=auth"
       - "traefik.http.routers.mongo.tls.certresolver=letsEncryptDnsCustom"
@@ -301,7 +301,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mongoex.rule=Host(`mongoex.local.test`)"
-      - "traefik.http.routers.mongoex.entrypoints=web"
+      - "traefik.http.routers.mongoex.entrypoints=web, websecure"
       - "traefik.http.services.mongoex.loadbalancer.server.port=${MONGO_EXPRESS_CONTAINER_PORT}"
       - "traefik.http.routers.mongoex.middlewares=auth"
       - "traefik.http.routers.mongoex.tls.certresolver=letsEncryptDnsCustom"
@@ -324,7 +324,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jenkins.rule=Host(`jenkins.local.test`)"
-      - "traefik.http.routers.jenkins.entrypoints=web"
+      - "traefik.http.routers.jenkins.entrypoints=web, websecure"
       - "traefik.http.services.jenkins.loadbalancer.server.port=${JENKINS_CONTAINER_PORT}"
       - "traefik.http.routers.jenkins.middlewares=auth"
       - "traefik.http.routers.jenkins.tls.certresolver=letsEncryptDnsCustom"
@@ -341,7 +341,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webhook.rule=Host(`webhook.local.test`)"
-      - "traefik.http.routers.webhook.entrypoints=web"
+      - "traefik.http.routers.webhook.entrypoints=web, websecure"
       - "traefik.http.services.webhook.loadbalancer.server.port=${WEBHOOK_CONTAINER_PORT}"
       - "traefik.http.routers.webhook.middlewares=auth"
       - "traefik.http.routers.webhook.tls.certresolver=letsEncryptDnsCustom"
@@ -360,7 +360,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.adminer.rule=Host(`adminer.local.test`)"
-      - "traefik.http.routers.adminer.entrypoints=web"
+      - "traefik.http.routers.adminer.entrypoints=web, websecure"
       - "traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_CONTAINER_PORT}"
       - "traefik.http.routers.adminer.middlewares=auth"
       - "traefik.http.routers.adminer.tls.certresolver=letsEncryptDnsCustom"
@@ -378,7 +378,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pma.rule=Host(`pma.local.test`)"
-      - "traefik.http.routers.pma.entrypoints=web"
+      - "traefik.http.routers.pma.entrypoints=web, websecure"
       - "traefik.http.services.pma.loadbalancer.server.port=${PHPMYADMIN_CONTAINER_PORT}"
       - "traefik.http.routers.pma.middlewares=auth"
       - "traefik.http.routers.pma.tls.certresolver=letsEncryptDnsCustom"
@@ -401,7 +401,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pg.rule=Host(`pg.local.test`)"
-      - "traefik.http.routers.pg.entrypoints=web"
+      - "traefik.http.routers.pg.entrypoints=web, websecure"
       - "traefik.http.services.pg.loadbalancer.server.port=${PGADMIN_CONTAINER_PORT}"
       - "traefik.http.routers.pg.middlewares=auth"
       - "traefik.http.routers.pg.tls.certresolver=letsEncryptDnsCustom"
@@ -441,7 +441,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.redis.rule=Host(`redis.local.test`)"
-      - "traefik.http.routers.redis.entrypoints=web"
+      - "traefik.http.routers.redis.entrypoints=web, websecure"
       - "traefik.http.services.redis.loadbalancer.server.port=${REDIS_WEBUI_CONTAINER_PORT}"
       - "traefik.http.routers.redis.middlewares=auth"
       - "traefik.http.routers.redis.tls.certresolver=letsEncryptDnsCustom"
@@ -480,7 +480,7 @@ services:
     labels:
       - traefik.enable=true
       # Dashboard
-      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.entrypoints=web, websecure"
       - "traefik.http.routers.traefik.rule=Host(`tk.local.test`)"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=user:htpasswd -nb"
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
@@ -524,7 +524,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.elastic.rule=Host(`elastic.local.test`)"
-      - "traefik.http.routers.elastic.entrypoints=web"
+      - "traefik.http.routers.elastic.entrypoints=web, websecure"
       - "traefik.http.services.elastic.loadbalancer.server.port=${ELASTICSEARCH_HOST_HTTP_PORT}"
       - "traefik.http.routers.elastic.middlewares=auth"
       - "traefik.http.routers.elastic.tls.certresolver=letsEncryptDnsCustom"
@@ -560,7 +560,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fusionauth.rule=Host(`auth.local.test`)"
-      - "traefik.http.routers.fusionauth.entrypoints=web"
+      - "traefik.http.routers.fusionauth.entrypoints=web, websecure"
       - "traefik.http.services.fusionauth.loadbalancer.server.port=${FUSIONAUTH_HTTP_PORT}"
       - "traefik.http.routers.fusionauth.middlewares=auth"
       - "traefik.http.routers.fusionauth.tls.certresolver=letsEncryptDnsCustom"
