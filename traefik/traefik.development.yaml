@@ -18,9 +18,10 @@ providers:
   providersThrottleDuration: 10s
   docker:
     endpoint: "tcp://socket-proxy:2375"
-    network: local_frontend
+    network: dockernet
     exposedByDefault: false
     watch: true
+
   file:
     # Enable the file provider to define routers / middlewares / services in file
     directory: /etc/traefik/dynamic

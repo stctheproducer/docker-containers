@@ -36,49 +36,49 @@ volumes:
 
 services:
   ### Application ################################################
-  frontend:
-    restart: always
-    build:
-      context: ../frontend/
-    volumes:
-      - ${APP_CODE_PATH_CONTAINER}/app/node_modules
-      - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
-    env_file: ../frontend/.env
-    depends_on:
-      - traefik
-    networks:
-      - frontend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`frontend.$DOMAIN_NAME`)"
-      - "traefik.http.routers.frontend.entrypoints=web, websecure"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.auth.basicauth.users=test:xxx"
-      - "traefik.http.routers.frontend.tls.certresolver=letsEncryptDnsCustom"
+  # frontend:
+  #   restart: always
+  #   build:
+  #     context: ../frontend/
+  #   volumes:
+  #     - ${APP_CODE_PATH_CONTAINER}/app/node_modules
+  #     - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
+  #   env_file: ../frontend/.env
+  #   depends_on:
+  #     - traefik
+  #   networks:
+  #     - frontend
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend.rule=Host(`frontend.$DOMAIN_NAME`)"
+  #     - "traefik.http.routers.frontend.entrypoints=web, websecure"
+  #     - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+  #     - "traefik.http.middlewares.auth.basicauth.users=test:xxx"
+  # - "traefik.http.routers.frontend.tls.certresolver=cloudflareDns"
 
   ################################################
   ## Adonis Microservices ################################################
 
-  authors:
-    restart: always
-    build:
-      context: ../${MS_DIR}/${MS_ONE}
-      dockerfile: Dockerfile.v5.dev
-    volumes:
-      - ${APP_CODE_PATH_CONTAINER}/api/node_modules
-      - ${APP_CODE_PATH_HOST}/${MS_DIR}/${MS_ONE}:${APP_CODE_PATH_CONTAINER}/api
-    env_file: ../${MS_DIR}/${MS_ONE}/.env
-    depends_on:
-      - ${API_DATABASE_CLIENT}
-    networks:
-      - frontend
-      - backend
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.authors.rule=Host(`authors.$DOMAIN_NAME`)"
-      - "traefik.http.routers.authors.entrypoints=web, websecure"
-      - "traefik.http.services.authors.loadbalancer.server.port=3333"
-      - "traefik.http.routers.authors.tls.certresolver=letsEncryptDnsCustom"
+  # authors:
+  #   restart: always
+  #   build:
+  #     context: ../${MS_DIR}/${MS_ONE}
+  #     dockerfile: Dockerfile.v5.dev
+  #   volumes:
+  #     - ${APP_CODE_PATH_CONTAINER}/api/node_modules
+  #     - ${APP_CODE_PATH_HOST}/${MS_DIR}/${MS_ONE}:${APP_CODE_PATH_CONTAINER}/api
+  #   env_file: ../${MS_DIR}/${MS_ONE}/.env
+  #   depends_on:
+  #     - ${API_DATABASE_CLIENT}
+  #   networks:
+  #     - frontend
+  #     - backend
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.authors.rule=Host(`authors.$DOMAIN_NAME`)"
+  #     - "traefik.http.routers.authors.entrypoints=web, websecure"
+  #     - "traefik.http.services.authors.loadbalancer.server.port=3333"
+  # - "traefik.http.routers.authors.tls.certresolver=cloudflareDns"
 
   ## GRAPHQL API ################################################
 
@@ -109,7 +109,7 @@ services:
       - "traefik.http.routers.graph.rule=Host(`graph.$DOMAIN_NAME`)"
       - "traefik.http.routers.graph.entrypoints=web, websecure"
       - "traefik.http.services.graph.loadbalancer.server.port=${GRAPHQL_CONTAINER_PORT}"
-      - "traefik.http.routers.graph.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.graph.tls.certresolver=cloudflareDns"
 
   ## PRISMA ################################################
   prisma:
@@ -153,7 +153,7 @@ services:
       - "traefik.http.routers.prisma.rule=Host(`prisma.$DOMAIN_NAME`)"
       - "traefik.http.routers.prisma.entrypoints=web, websecure"
       - "traefik.http.services.prisma.loadbalancer.server.port=${PRISMA_CONTAINER_PORT}"
-      - "traefik.http.routers.prisma.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.prisma.tls.certresolver=cloudflareDns"
 
   ## STRAPI ################################################
   strapi:
@@ -182,7 +182,7 @@ services:
       - "traefik.http.routers.strapi.rule=Host(`strapi.$DOMAIN_NAME`)"
       - "traefik.http.routers.strapi.entrypoints=web, websecure"
       - "traefik.http.services.strapi.loadbalancer.server.port=${STRAPI_CONTAINER_PORT}"
-      - "traefik.http.routers.strapi.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.strapi.tls.certresolver=cloudflareDns"
 
   ### MySQL ################################################
   mysql:
@@ -286,7 +286,7 @@ services:
       - "traefik.http.routers.mongo.rule=Host(`mongo.$DOMAIN_NAME`)"
       - "traefik.http.routers.mongo.entrypoints=web, websecure"
       - "traefik.http.services.mongo.loadbalancer.server.port=${MONGO_WEBUI_PORT}"
-      - "traefik.http.routers.mongo.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.mongo.tls.certresolver=cloudflareDns"
 
   ### Mongo Express ##############################################
   mongo-express:
@@ -311,7 +311,7 @@ services:
       - "traefik.http.routers.mongoex.rule=Host(`mongoex.$DOMAIN_NAME`)"
       - "traefik.http.routers.mongoex.entrypoints=web, websecure"
       - "traefik.http.services.mongoex.loadbalancer.server.port=${MONGO_EXPRESS_CONTAINER_PORT}"
-      - "traefik.http.routers.mongoex.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.mongoex.tls.certresolver=cloudflareDns"
 
   ### Jenkins ###################################################
   jenkins:
@@ -333,7 +333,7 @@ services:
       - "traefik.http.routers.jenkins.rule=Host(`jenkins.$DOMAIN_NAME`)"
       - "traefik.http.routers.jenkins.entrypoints=web, websecure"
       - "traefik.http.services.jenkins.loadbalancer.server.port=${JENKINS_CONTAINER_PORT}"
-      - "traefik.http.routers.jenkins.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.jenkins.tls.certresolver=cloudflareDns"
 
   ### Webhook ###################################################
   webhook:
@@ -349,7 +349,7 @@ services:
       - "traefik.http.routers.webhook.rule=Host(`webhook.$DOMAIN_NAME`)"
       - "traefik.http.routers.webhook.entrypoints=web, websecure"
       - "traefik.http.services.webhook.loadbalancer.server.port=${WEBHOOK_CONTAINER_PORT}"
-      - "traefik.http.routers.webhook.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.webhook.tls.certresolver=cloudflareDns"
 
   ### Adminer ################################################
   adminer:
@@ -367,7 +367,7 @@ services:
       - "traefik.http.routers.adminer.rule=Host(`adminer.$DOMAIN_NAME`)"
       - "traefik.http.routers.adminer.entrypoints=web, websecure"
       - "traefik.http.services.adminer.loadbalancer.server.port=${ADMINER_CONTAINER_PORT}"
-      - "traefik.http.routers.adminer.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.adminer.tls.certresolver=cloudflareDns"
 
   ### phpMyAdmin ################################################
   phpmyadmin:
@@ -384,8 +384,7 @@ services:
       - "traefik.http.routers.pma.rule=Host(`pma.$DOMAIN_NAME`)"
       - "traefik.http.routers.pma.entrypoints=web, websecure"
       - "traefik.http.services.pma.loadbalancer.server.port=${PHPMYADMIN_CONTAINER_PORT}"
-
-      - "traefik.http.routers.pma.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.pma.tls.certresolver=cloudflareDns"
 
   ### pgAdmin ################################################
   pgadmin:
@@ -407,8 +406,7 @@ services:
       - "traefik.http.routers.pg.rule=Host(`pg.$DOMAIN_NAME`)"
       - "traefik.http.routers.pg.entrypoints=web, websecure"
       - "traefik.http.services.pg.loadbalancer.server.port=${PGADMIN_CONTAINER_PORT}"
-
-      - "traefik.http.routers.pg.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.pg.tls.certresolver=cloudflareDns"
 
   ### Redis ################################################
   redis:
@@ -449,8 +447,7 @@ services:
       - "traefik.http.routers.redis.rule=Host(`redis.$DOMAIN_NAME`)"
       - "traefik.http.routers.redis.entrypoints=web, websecure"
       - "traefik.http.services.redis.loadbalancer.server.port=${REDIS_WEBUI_CONTAINER_PORT}"
-
-      - "traefik.http.routers.redis.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.redis.tls.certresolver=cloudflareDns"
 
   ### TRAEFIK #########################################
   socket-proxy:
@@ -479,7 +476,7 @@ services:
       - ${TRAEFIK_HOST_HTTP_PORT}:80
       - ${TRAEFIK_HOST_HTTPS_PORT}:443
     networks:
-      - frontend
+      - dockernet
       - proxy
     depends_on:
       - socket-proxy
@@ -536,8 +533,7 @@ services:
       - "traefik.http.routers.elastic.rule=Host(`elastic.$DOMAIN_NAME`)"
       - "traefik.http.routers.elastic.entrypoints=web, websecure"
       - "traefik.http.services.elastic.loadbalancer.server.port=${ELASTICSEARCH_HOST_HTTP_PORT}"
-
-      - "traefik.http.routers.elastic.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.elastic.tls.certresolver=cloudflareDns"
 
   ### FUSIONAUTH ########################################
   fusionauth:
@@ -553,12 +549,12 @@ services:
       DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
       FUSIONAUTH_MEMORY: ${FUSIONAUTH_MEMORY}
       # FUSIONAUTH_SEARCH_SERVERS: ${FUSIONAUTH_SEARCH_SERVERS}
-      # FUSIONAUTH_SEARCH_ENGINE_TYPE: elasticsearch
+      FUSIONAUTH_SEARCH_ENGINE_TYPE: ${FUSIONAUTH_SEARCH_ENGINE_TYPE}
       FUSIONAUTH_RUNTIME_MODE: ${FUSIONAUTH_RUNTIME_MODE}
       FUSIONAUTH_URL: ${FUSIONAUTH_URL}
     depends_on:
       - ${API_DATABASE_CLIENT}
-      - elasticsearch
+      # - elasticsearch
       - traefik
     networks:
       - frontend
@@ -570,4 +566,4 @@ services:
       - "traefik.http.routers.fusionauth.rule=Host(`auth.$DOMAIN_NAME`)"
       - "traefik.http.routers.fusionauth.entrypoints=web, websecure"
       - "traefik.http.services.fusionauth.loadbalancer.server.port=${FUSIONAUTH_CONTAINER_PORT}"
-      - "traefik.http.routers.fusionauth.tls.certresolver=letsEncryptDnsCustom"
+      # - "traefik.http.routers.fusionauth.tls.certresolver=cloudflareDns"
