@@ -341,9 +341,9 @@ services:
     volumes:
       - ${WEBHOOK_HOOKS_DIR}:/etc/webhook
       - ${WEBHOOK_SCRIPTS_DIR}:/opt/scripts
-      - ${APP_CODE_PATH_HOST}:/opt/deploy
+      - ${APP_PROJECTS}:/opt/deploy
     networks:
-      - frontend
+      - dockernet
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.webhook.rule=Host(`webhook.$DOMAIN_NAME`)"
