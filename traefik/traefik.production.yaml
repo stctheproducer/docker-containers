@@ -38,7 +38,7 @@ providers:
   providersThrottleDuration: 10s
   docker:
     endpoint: "tcp://socket-proxy:2375"
-    network: local_frontend
+    network: dockernet
     exposedByDefault: false
     watch: true
   file:
@@ -57,10 +57,10 @@ certificatesResolvers:
   # Use Let's Encrypt staging server with the caServer
   # configuration option when experimenting to avoid hitting
   # this limit too fast.
-  letsEncryptDns:
+  namecheapDns:
     acme:
       email: email@address.com
-      #  Staging Server
+      # Staging Server
       caServer: https://acme-staging-v02.api.letsencryptorg/directory"
       # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
@@ -72,7 +72,7 @@ certificatesResolvers:
   letsEncryptHttp:
     acme:
       email: email@address.com
-      #  Staging Server
+      # Staging Server
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
@@ -84,7 +84,7 @@ certificatesResolvers:
   letsEncryptTls:
     acme:
       email: email@address.com
-      #  Staging Server
+      # Staging Server
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
@@ -94,10 +94,10 @@ certificatesResolvers:
         entryPoint: websecure
       tlsChallenge: {}
 
-  letsEncryptDnsCustom:
+  cloudflareDns:
     acme:
       email: email@address.com
-      #  Staging Server
+      # Staging Server
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
@@ -107,4 +107,5 @@ certificatesResolvers:
         delayBeforeCheck: 42
         resolvers:
           - "1.1.1.1:53"
-          - "8.8.8.8:53" # 1.0.0.1:53
+          - "1.0.0.1:53"
+          - "8.8.8.8:53"

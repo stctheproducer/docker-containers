@@ -4,8 +4,11 @@ http:
     web:
       entryPoints:
         - web
+        - websecure
       rule: "Host(`dashboard.local.test`)"
       service: web
+      tls:
+        certResolver: cloudflareDns
 
   services:
     # noop service, the URL will be never called
@@ -13,19 +16,3 @@ http:
       loadBalancer:
         servers:
           - url: http://192.168.0.1:3333
-
-tcp:
-  routers:
-    uiDev:
-      entryPoints:
-        - websecure
-      service: uiDev
-      rule: "HostSNI(`dev.bwino.io`)"
-      tls:
-        passthrough: true
-        certResolver: letsEncryptTls
-  services:
-    uiDev:
-      loadBalancer:
-        servers:
-          - address: http://192.168.0.1:3333
