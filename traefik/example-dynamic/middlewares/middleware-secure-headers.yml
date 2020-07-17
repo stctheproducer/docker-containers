@@ -22,8 +22,8 @@ http:
         # sslHost: "example.com"
         referrerPolicy: same-origin
         # Setting contentSecurityPolicy is more secure but it can break things. Proper auth will reduce the risk.
-        # the below line also breaks some apps due to 'none' - sonarr, radarr, etc.
-        # contentSecurityPolicy = "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
+        # the line below also breaks some apps due to 'none' - sonarr, radarr, etc.
+        # contentSecurityPolicy: "frame-ancestors '*.example.com:*';object-src 'none';script-src 'none';"
         featurePolicy: >-
           camera 'none'; geolocation 'none'; microphone 'none'; payment 'none';
           usb 'none'; vr 'none';

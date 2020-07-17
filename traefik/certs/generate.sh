@@ -48,7 +48,7 @@ DOMAIN=$1
 # ? you might have to update mkcert and regenerate the root.
 # ?
 # ? For Android, you will have to install the CA and then enable user roots in the development
-# ? build of your app. See this StackOverflow answer.
+# ? build of your app.
 
 # * Using with NodeJS
 # export NODE_EXTRA_CA_CERTS="$(mkcert -CAROOT)/rootCA.pem"
