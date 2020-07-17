@@ -4,7 +4,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - httpsredirect
+        - redirectallhttp
       rule: "HostRegexp(`{host:.+}`)"
       service: noop
 
@@ -15,6 +15,6 @@ http:
           - url: "http://192.168.53.1"
 
   middlewares:
-    httpsredirect:
+    redirectallhttp:
       redirectScheme:
         scheme: https

@@ -4,8 +4,6 @@ global:
 entryPoints:
   web:
     address: ":80"
-  mysql:
-    address: ":3306"
   metrics:
     address: ":8082"
 

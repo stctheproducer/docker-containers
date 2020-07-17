@@ -1,18 +1,18 @@
-# docker network create --subnet 192.168.0.0/24 --gateway 192.168.0.1 dockernet
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
 http:
   routers:
-    web:
+    serviceName:
       entryPoints:
         - web
         - websecure
-      rule: "Host(`dashboard.local.test`)"
-      service: web
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      service: serviceName
       tls:
         certResolver: cloudflareDns
 
   services:
     # noop service, the URL will be never called
-    web:
+    serviceName:
       loadBalancer:
         servers:
           - url: http://192.168.0.1:3333
