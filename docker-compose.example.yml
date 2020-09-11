@@ -197,6 +197,7 @@ services:
 
   ### PostgreSQL ###########################################
   postgres:
+    restart: unless-stopped
     build:
       context: ./postgres
       args:
@@ -349,6 +350,7 @@ services:
 
   ### Redis ################################################
   redis:
+    restart: unless-stopped
     build: ./redis
     volumes:
       - "${DATA_PATH_HOST}/redis:/data"
