@@ -8,3 +8,5 @@ webhook/scripts/*.sh
 mongo/mongod.conf
 secrets/*.secret
 ./**/*.secret
+explorer/examples/certs/cert.pem
+explorer/examples/certs/key.pem
