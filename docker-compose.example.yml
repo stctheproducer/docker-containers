@@ -357,7 +357,7 @@ services:
     # ports:
     # - "${REDIS_PORT}:6379"
     networks:
-      backend:
+      backend: {}
       backdocker:
         ipv4_address: 192.168.90.6
 
@@ -472,8 +472,9 @@ services:
       # - elasticsearch
       - traefik
     networks:
-      - dockernet
-      - backend
+      dockernet:
+        ipv4_address: 192.168.0.10
+      backend: {}
     # ports:
     # - 9011:${FUSIONAUTH_CONTAINER_PORT}
     labels:
