@@ -1,0 +1,23 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+http:
+  routers:
+    webhook:
+      rule: Host(`webhook.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - web
+      middlewares:
+        - redirecthttp@file
+      service: webhook-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    webhook-secure:
+      rule: Host(`webhook.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls: {}
+      service: webhook-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    webhook-fwd:
+      rule: (Host(`{{env "TUNNEL_URL"}}`) && Path(`/webhook`))
+      entryPoints:
+        - websecure
+      middlewares:
+        - pathstrip@file
+      service: webhook-{{env "COMPOSE_PROJECT_NAME"}}@docker
