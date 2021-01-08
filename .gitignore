@@ -1,6 +1,13 @@
 .env
 docker-compose.yml
-traefik/traefik.toml
+traefik/traefik.yaml
+traefik/dnschallenge/*
+traefik/.env
 webhook/hooks/hooks.json
 webhook/scripts/*.sh
 mongo/mongod.conf
+secrets/*.secret
+./**/*.secret
+explorer/examples/certs/cert.pem
+explorer/examples/certs/key.pem
+./**/*.lock
