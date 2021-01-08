@@ -51,6 +51,7 @@ services:
       # - "/home/chanda/Pictures:/opt/home/Pictures"
     labels:
       - traefik.enable=true
+
   # WHOAMI ################################################
   whoami:
     image: emilevauge/whoami
@@ -141,10 +142,6 @@ services:
       - "DATABASE_PORT=${API_DATABASE_PORT}"
       - "DATABASE_USERNAME=${API_DATABASE_USER}"
       - "DATABASE_PASSWORD=${API_DATABASE_PASSWORD}"
-      # Mongo
-      # - "DATABASE_SRV=${API_DATABASE_SRV}"
-      # - "DATABASE_SSL=${API_DATABASE_SSL}"
-      # - "DATABASE_AUTHENTICATION_DATABASE=${API_DATABASE_AUTHENTICATION_DATABASE}"
     volumes:
       - "${DATA_PATH_HOST}/strapi:/srv/app"
     labels:

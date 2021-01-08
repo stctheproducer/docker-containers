@@ -10,3 +10,4 @@ secrets/*.secret
 ./**/*.secret
 explorer/examples/certs/cert.pem
 explorer/examples/certs/key.pem
+./**/*.lock
