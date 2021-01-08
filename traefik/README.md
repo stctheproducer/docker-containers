@@ -49,3 +49,9 @@ openssl rand -base64 12
 
 # +iemAiIxER8u1/CG8DuSl98WdM/T6l+uaw==
 ```
+
+```bash
+ssh -R 8000:127.0.0.1:443 local.test -v
+
+ssh -R $REMOTE_PORT:127.0.0.1:$LOCAL_PORT $REMOTE_URL -v
+```

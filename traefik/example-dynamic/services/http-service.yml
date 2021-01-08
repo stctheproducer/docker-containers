@@ -1,0 +1,17 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+http:
+  routers:
+    serviceName:
+      entryPoints:
+        - web
+        - websecure
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      service: serviceName
+      tls:
+        certResolver: cloudflareDns
+
+  services:
+    serviceName:
+      loadBalancer:
+        servers:
+          - url: http://192.168.0.1:3333

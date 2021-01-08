@@ -1,0 +1,16 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+http:
+  routers:
+    portainer:
+      rule: Host(`portainer.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - web
+      middlewares:
+        - redirecthttp@file
+      service: portainer-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    portainer-secure:
+      rule: Host(`portainer.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls: {}
+      service: portainer-{{env "COMPOSE_PROJECT_NAME"}}@docker

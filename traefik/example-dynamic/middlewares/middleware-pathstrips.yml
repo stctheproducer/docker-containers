@@ -1,0 +1,8 @@
+http:
+  middlewares:
+    pathstrips:
+      stripPrefix:
+        prefixes:
+          - "/webhook"
+          - "/whoami"
+        forceSlash: false
