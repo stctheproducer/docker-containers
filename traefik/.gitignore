@@ -1,0 +1,9 @@
+dynamic/*
+certs/*.key
+certs/*.cert
+certs/*.crt
+certs/*.pem
+certs/*.csr
+certs/*.ext
+certs/*.srl
+.env

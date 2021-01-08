@@ -1,0 +1,11 @@
+# Declaring the user list
+http:
+  middlewares:
+    basic-auth:
+      basicAuth:
+        users:
+          # ? Array format is user:password
+          # ? Password can be generated using the command
+          # ? htpasswd -nb user "password"
+          - "test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"
+          - "test2:$apr1$d9hr9HBB$4HxwgUir3HP4EsggP/QNo0"

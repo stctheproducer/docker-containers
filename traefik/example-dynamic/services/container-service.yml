@@ -1,0 +1,23 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+http:
+  routers:
+    serviceName:
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - web
+      middlewares:
+        - redirecthttp@file
+      service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    serviceName-secure:
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls: {}
+      service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    serviceName-fwd:
+      rule: Host(`{{env "TUNNEL_URL"}}`) && Path(`/serviceName`)
+      entryPoints:
+        - websecure
+      middlewares:
+        - pathstrip@file
+      service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
