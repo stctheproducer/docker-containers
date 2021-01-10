@@ -1,3 +1,4 @@
+acme/*
 dynamic/*
 certs/*.key
 certs/*.cert
