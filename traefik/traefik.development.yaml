@@ -13,7 +13,7 @@ api:
   debug: true
 
 providers:
-  providersThrottleDuration: 10s
+  providersThrottleDuration: 10
   docker:
     endpoint: "tcp://socket-proxy:2375"
     network: dockernet
