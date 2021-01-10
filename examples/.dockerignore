@@ -1,0 +1,92 @@
+############################
+# Linux
+############################
+
+*~
+
+############################
+# Packages
+############################
+
+*.7z
+*.csv
+*.dat
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.seed
+*.so
+*.swo
+*.swp
+*.swn
+*.swm
+*.out
+*.pid
+
+############################
+# Node.js
+############################
+
+lib-cov
+lcov.info
+pids
+logs
+results
+node_modules
+.node_history
+.env
+.env.local
+.env.production
+.env.staging
+
+############################
+# Misc.
+############################
+
+*#
+ssl
+.idea
+nbproject
+public/uploads/*
+!public/uploads/.gitkeep
+.gitignore
+.prettierrc
+.prettierrc.js
+.eslintrc.json
+
+############################
+# Logs and databases
+############################
+
+.tmp
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+
+############################
+# Tests
+############################
+
+testApp
+coverage
+
+############################
+# Strapi
+############################
+
+exports
+.cache
+build
+
+# FA
+# tFvfXDt5EWEyCo0AJJabjquCPb0FAVHvwWhSqvSVYCE

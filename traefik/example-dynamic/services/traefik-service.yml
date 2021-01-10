@@ -1,0 +1,25 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+http:
+  routers:
+    traefik-long:
+      rule: Host(`tk.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - web
+      middlewares:
+        - redirecthttp@file
+      service: api@internal
+    traefik-long-secure:
+      rule: Host(`tk.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls:
+        domains:
+          - main: '{{env "DOMAIN_NAME"}}'
+            # Comment out the next line after first run of traefik to force the use of wildcard certs
+            sans:
+              - '*.{{env "DOMAIN_NAME"}}'
+      # middlewares:
+      #   - secure-headers@file
+      #   - rate-limit@file
+      #   - basic-auth@file
+      service: api@internal

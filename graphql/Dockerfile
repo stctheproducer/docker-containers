@@ -17,7 +17,7 @@ USER node
 COPY ./package.json ./
 
 # RUN  yarn install --production
-RUN  yarn install --prod --force --emoji true
+RUN  yarn install --production --force --emoji true
 
 # build time argument to add tools for development
 ARG NODE_ENV
@@ -35,4 +35,8 @@ USER node
 COPY --chown=node:node ./src ./src
 
 EXPOSE 4000
+
+# Production
+# CMD [ "yarn", "start"]
+
 CMD [ "yarn", "dev" ]

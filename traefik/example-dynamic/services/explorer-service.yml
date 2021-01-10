@@ -1,0 +1,22 @@
+http:
+  routers:
+    explorer:
+      rule: Host(`explorer.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - web
+      middlewares:
+        - redirecthttp@file
+      service: explorer-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    explorer-secure:
+      rule: Host(`explorer.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls: {}
+      service: explorer-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    explorer-fwd:
+      rule: Host(`{{env "TUNNEL_URL"}}`) && Path(`/explorer`)
+      entryPoints:
+        - websecure
+      middlewares:
+        - pathstrip@file
+      service: explorer-{{env "COMPOSE_PROJECT_NAME"}}@docker

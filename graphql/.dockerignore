@@ -2,7 +2,12 @@
 node_modules
 .dockerignore
 .env
+.env.production
+.env.staging
 .gitignore
+.prettierrc
+.prettierrc.js
+.eslintrc.json
 database
 dist
 docker-compose.override.yml
