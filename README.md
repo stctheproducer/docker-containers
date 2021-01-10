@@ -18,8 +18,6 @@ Firstly, here's a list of things you'll need (I may be biased towards Linux as I
 
 <h2>Features</h2>
 
----
-
 - [Configuration](#configuration)
   - [Environment Variables](#environment-variables)
   - [Docker Compose File](#docker-compose-file)
