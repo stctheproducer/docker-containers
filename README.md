@@ -10,11 +10,9 @@ Firstly, here's a list of things you'll need (I may be biased towards Linux as I
 
 ## dnsmasq
 
-`dnsmasq` makes it easier to have services and projects running under an optional domain name on your local machines. It's pretty machine like having an automated `/etc/hosts` file. Once you have a domain set up, you don't need to worry about adding subdomains. You can read about how to set it up [here](https://www.linux.com/training-tutorials/dnsmasq-easy-lan-name-services/).
+`dnsmasq` makes it easier to have services and projects running under an optional domain name on your local machines. It's pretty machine like having an automated `/etc/hosts` file. Once you have a domain set up, you don't need to worry about adding subdomains. You can read about how to set it up [here][dnsmasq-blog].
 
-The domain I use for my local development is usually `local.test` as can be seen in my `dnsmasq.conf` (config) file below:
-
-<script src="https://gist.github.com/stctheproducer/3dd47aae53dd86081f946696c886fa39.js"></script>
+The domain I use for my local development is usually `local.test` as can be seen in my [`dnsmasq.conf` config file][dnsmasq-conf].
 
 After completng the configurations, run the following commands:
 
@@ -26,7 +24,7 @@ After completng the configurations, run the following commands:
   sudo systemctl start dnsmasq # to start the dnsmasq service (or restart if it was running before)
 ```
 
-You may also need to make changes to your `resolvconf.conf` so that you are able to browse external websites. An example file is also in the gist shared above, but for brevity, the lines to change are shown below:
+You may also need to make changes to your `resolvconf.conf` so that you are able to browse external websites. You can check out [this gist for an example][resolvconf-conf], but for brevity, the lines to change are shown below:
 
 ```conf
 
@@ -45,3 +43,8 @@ sudo resolvconf -u # updates resolv subdirectories
 ```
 
 And that's it, as long as you have a service running at port 80, the domain `local.test` will resolve to it without needing to touch your hosts file. For services running at other ports, keep reading 😉
+
+<!-- Links -->
+[dnsmasq-blog]: https://www.linux.com/training-tutorials/dnsmasq-easy-lan-name-services/
+[dnsmasq-conf]: https://gist.github.com/stctheproducer/3dd47aae53dd86081f946696c886fa39#file-dnsmasq-conf
+[resolvconf-conf]: https://gist.github.com/stctheproducer/3dd47aae53dd86081f946696c886fa39#file-resolvconf-conf
