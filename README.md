@@ -10,23 +10,22 @@ Firstly, here's a list of things you'll need (I may be biased towards Linux as I
 2. A local DNS server such as `dnsmasq` (Optional)
 3. An SSL certificate generator such as `mkcert` (Optional)
 
-**Table of Contents**
+<h2>Features</h2>
+
 ---
 
-- [Docker Containers for Local Development](#docker-containers-for-local-development)
-  - [**Table of Contents**](#table-of-contents)
-  - [Configuration](#configuration)
-    - [Environment Variables](#environment-variables)
-    - [Docker Compose File](#docker-compose-file)
-    - [Networks External to Docker Compose Project](#networks-external-to-docker-compose-project)
-  - [dnsmasq](#dnsmasq)
-  - [mkcert](#mkcert)
-    - [Usage in Mobile Development](#usage-in-mobile-development)
-    - [Usage with Node.js](#usage-with-nodejs)
-  - [Traefik](#traefik)
-    - [Setting Up Traefik](#setting-up-traefik)
-    - [Using Traefik to Proxy to Services](#using-traefik-to-proxy-to-services)
-  - [Running A Service](#running-a-service)
+- [Configuration](#configuration)
+  - [Environment Variables](#environment-variables)
+  - [Docker Compose File](#docker-compose-file)
+  - [Networks External to Docker Compose Project](#networks-external-to-docker-compose-project)
+- [dnsmasq](#dnsmasq)
+- [mkcert](#mkcert)
+  - [Usage in Mobile Development](#usage-in-mobile-development)
+  - [Usage with Node.js](#usage-with-nodejs)
+- [Traefik](#traefik)
+  - [Setting Up Traefik](#setting-up-traefik)
+  - [Using Traefik to Proxy to Services](#using-traefik-to-proxy-to-services)
+- [Managing Services](#managing-services)
 
 ## Configuration
 
@@ -152,7 +151,7 @@ These are just starter defaults that can be customized to your whim. To get a be
 
 Now that Traefik is set up, you can point it to the many services, containerized or not, running on your local machine. The SSL certificates you created earlier are already in the right directory for the Traefik service to use them. Their is a more detailed explanation in the [`traefik` directory](traefik/README.md)
 
-## Running A Service
+## Managing Services
 
 To run a service, run the following command
 
@@ -161,6 +160,18 @@ docker-compose up -d serviceName
 ```
 
 where the `serviceName` is the name of a service in the `docker-compose.yml` file under the `services` object.
+
+To stop a container service:
+
+```bash
+docker-compose stop serviceName
+```
+
+To destroy container services:
+
+```bash
+docker-compose down
+```
 
 <!-- Links -->
 [dnsmasq-blog]: https://www.linux.com/training-tutorials/dnsmasq-easy-lan-name-services/ "How to set up dnsmasq"
