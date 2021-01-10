@@ -59,7 +59,7 @@ For docker projects, you can use [`example-dynamic/services/container-service.ym
 
 ### Working with Independent Services on Different Ports
 
-For locally running services, that might be using a process manager such as [PM2][pm2-manager], you can use [example-dynamic/services/http-service.yml](example-dynamic/services/http-service.yml) as a template.
+For locally running services, that might be using a process manager such as [PM2][pm2-manager], you can use [`example-dynamic/services/http-service.yml`](example-dynamic/services/http-service.yml) as a template.
 
 ## Middlewares
 
@@ -105,7 +105,7 @@ This makes use of the `basic-auth` middleware whose configuration can be found i
 cp example-dynamic/middlewares/middleware-basic-auth.yml dynamic/
 ```
 
-This particular middleware requires a users array in the format `user:password` pair using the `htpasswd` command.
+This particular middleware requires a users array in the `user:password` format using the `htpasswd` command.
 
 On Ubuntu, it can be installed using the following command.
 
@@ -128,7 +128,7 @@ sudo pacman -Rncs apache
 To create `user:password` pair, it's possible to use this command:
 
 ```bash
-echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g
+echo $(htpasswd -nb $USERNAME $PASSWORD) | sed -e s/\\$/\\$\\$/g
 
 # user:$$apr1$$XreceAun$$aWg8Y/AUo0CJDeFixyRuT0
 ```
