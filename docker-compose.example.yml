@@ -7,10 +7,8 @@ networks:
     driver: "${NETWORKS_DRIVER}"
   proxy:
     driver: "${NETWORKS_DRIVER}"
-  # docker network create --subnet 192.168.90.0/24 --gateway 192.168.90.1 backdocker
   dockernet:
     external: true
-  # docker network create --subnet 192.168.90.0/24 --gateway 192.168.90.1 backdocker
   backdocker:
     external: true
 
@@ -47,8 +45,6 @@ services:
       - dockernet
     volumes:
       - "./explorer/examples:/opt/explorer"
-      # - "/home/chanda/Documents/Books:/opt/home/Books"
-      # - "/home/chanda/Pictures:/opt/home/Pictures"
     labels:
       - traefik.enable=true
 

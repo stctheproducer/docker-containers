@@ -21,6 +21,13 @@ http:
       middlewares:
         - pathstrip@file
       service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
+    serviceName-reverse:
+      rule: Host(`serviceName.{{env "TUNNEL_URL"}}`)
+      entryPoints:
+        - websecure
+      middlewares:
+        - pathstrip@file
+      service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
   # services:
   #   serviceName:
   #     loadBalancer:
