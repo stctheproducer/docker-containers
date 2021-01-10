@@ -8,6 +8,9 @@ Firstly, here's a list of things you'll need (I may be biased towards Linux as I
 2. An SSL certificate generator such as `mkcert` (Optional)
 3. `docker` and `docker-compose` are necessary (hey, we are dealing with docker containers 🤭)
 
+- [Docker Containers for Local Development](#docker-containers-for-local-development)
+  - [dnsmasq](#dnsmasq)
+
 ## dnsmasq
 
 `dnsmasq` makes it easier to have services and projects running under an optional domain name on your local machines. It's pretty machine like having an automated `/etc/hosts` file. Once you have a domain set up, you don't need to worry about adding subdomains. You can read about how to set it up [here][dnsmasq-blog].
