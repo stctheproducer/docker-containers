@@ -1,26 +1,25 @@
-# Using Traefik
+# Traefik
 
 I use Traefik using several different files for services and middlewares.
 
-**Table of Contents**
+<h2>Features</h2>
+
 ---
 
-- [Using Traefik](#using-traefik)
-  - [**Table of Contents**](#table-of-contents)
-  - [Setting Up SSL and Traefik](#setting-up-ssl-and-traefik)
-    - [Creating the `dynamic` Directory](#creating-the-dynamic-directory)
-    - [Linking the SSL Certificates to Traefik](#linking-the-ssl-certificates-to-traefik)
-    - [Linking the Traefik Container/Service](#linking-the-traefik-containerservice)
-  - [Services](#services)
-    - [Working with Docker Containers](#working-with-docker-containers)
-    - [Working with Independent Services on Different Ports](#working-with-independent-services-on-different-ports)
-  - [Middlewares](#middlewares)
-    - [Redirect HTTP to HTTPS](#redirect-http-to-https)
-    - [Path Strips](#path-strips)
-    - [Basic Web Authentication](#basic-web-authentication)
-      - [Creating a User](#creating-a-user)
-  - [SSH Reverse Tunneling](#ssh-reverse-tunneling)
-    - [Bonus: Using Traefik on the Public Server](#bonus-using-traefik-on-the-public-server)
+- [Setting Up SSL and Traefik](#setting-up-ssl-and-traefik)
+  - [Creating the `dynamic` Directory](#creating-the-dynamic-directory)
+  - [Linking the SSL Certificates to Traefik](#linking-the-ssl-certificates-to-traefik)
+  - [Linking the Traefik Container/Service](#linking-the-traefik-containerservice)
+- [Services](#services)
+  - [Working with Docker Containers](#working-with-docker-containers)
+  - [Working with Independent Services on Different Ports](#working-with-independent-services-on-different-ports)
+- [Middlewares](#middlewares)
+  - [Redirect HTTP to HTTPS](#redirect-http-to-https)
+  - [Path Strips](#path-strips)
+  - [Basic Web Authentication](#basic-web-authentication)
+    - [Creating a User](#creating-a-user)
+- [SSH Reverse Tunneling](#ssh-reverse-tunneling)
+  - [Bonus: Using Traefik on the Public Server](#bonus-using-traefik-on-the-public-server)
 
 ## Setting Up SSL and Traefik
 
@@ -206,7 +205,7 @@ http:
           - url: http://192.168.0.1:8000
 ```
 
-On your local machine you would have a configuration something like this:
+On your local machine you would have a configuration something like this (container service):
 
 ```yml
 http:
