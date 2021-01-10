@@ -4,14 +4,20 @@ http:
     serviceName:
       entryPoints:
         - web
-        - websecure
       rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      middlewares:
+        - redirecthttp@file
       service: serviceName
-      tls:
-        certResolver: cloudflareDns
+    serviceName-secure:
+      entryPoints:
+        - websecure
+      tls: {}
+      # tls:
+      # certResolver: cloudflareDns
+      service: serviceName
 
   services:
     serviceName:
       loadBalancer:
         servers:
-          - url: http://192.168.0.1:3333
+          - url: http://192.168.0.1:{{PORT_NUMBER_OF_SERVICE}}
