@@ -12,7 +12,7 @@ This repo contains docker containers I use mostly for JavaScript development but
 
 Firstly, here's a list of things you'll need (I may be biased towards Linux as I use Manjaro as my daily driver):
 
-1. `docker` and `docker-compose` are necessary (After all, we are dealing with docker containers 🤷‍♂️)
+1. Docker: `docker` and `docker-compose` are necessary (I mean, docker containers, right? 🤷‍♂️)
 2. A local DNS server such as `dnsmasq` (Optional)
 3. An SSL certificate generator such as `mkcert` (Optional)
 
@@ -35,7 +35,7 @@ Firstly, here's a list of things you'll need (I may be biased towards Linux as I
 
 ### Environment Variables
 
-Take time to go through the `.env.example` file to see a the default values and make your own copy according to your environment (dev or prod).
+Take time to go through the `.env.example` file to see the default values and make your own copy according to your environment (dev or prod).
 
 ```bash
 cp .env.example .env
@@ -51,7 +51,7 @@ cp docker-compose.example.yml docker-compose.yml
 
 ### Networks External to Docker Compose Project
 
-This `docker-compose.yml` configuration makes use of two external to the compose project, namely, `dockernet` and `backdocker`. You'll have to create two docker networks. You can use any IP range you choose but keep in mind that you'll have to update IP addresses in the `docker-compose.yml` configuration. An example:
+This `docker-compose.yml` configuration makes use of two networks external to the docker-compose project, namely, `dockernet` and `backdocker`. You'll have to create two docker networks. You can use any IP range you choose but keep in mind that you'll have to update IP addresses in the `docker-compose.yml` configuration. An example:
 
 ```bash
 docker network create --subnet 192.168.90.0/24 --gateway 192.168.90.1 backdocker
@@ -61,7 +61,7 @@ docker network create --subnet 192.168.0.0/24 --gateway 192.168.0.1 dockernet
 
 ## dnsmasq
 
-`dnsmasq` makes it easier to have services and projects running under an optional domain name on your local machines. It's pretty machine like having an automated `/etc/hosts` file. Once you have a domain set up, you don't need to worry about adding subdomains. You can read about how to set it up [here][dnsmasq-blog].
+`dnsmasq` makes it easier to have services and projects running under an optional domain name on your local machines. It's pretty much like having an automated `/etc/hosts` file. Once you have a domain set up, you don't need to worry about adding subdomains. You can read about how to set it up [here][dnsmasq-blog].
 
 The domain I use for my local development is usually `local.test` as can be seen in my [`dnsmasq.conf` config file][dnsmasq-conf].
 
@@ -93,7 +93,7 @@ After making said changes run the following command and restart the `dnsmasq` se
 sudo resolvconf -u # updates resolv subdirectories
 ```
 
-And that's it, as long as you have a service running at port 80, the domain `local.test` will resolve to it without needing to touch your hosts file. For services running at other ports, keep reading! 😉
+And that's it, as long as you have a service running at port `80`, the domain `local.test` will resolve to it without needing to touch your `hosts` file. For services running at other ports, keep reading! 😉
 
 ## mkcert
 
@@ -101,9 +101,11 @@ And that's it, as long as you have a service running at port 80, the domain `loc
 
 > `mkcert` is a simple tool for making locally-trusted development certificates. It requires no configuration.
 
-Installation, and instructions on setting up can be found on [this GitHub repository][mkcert-github].
+Installation, and instructions on setting up can be found at [this GitHub repository][mkcert-github].
 
-I created a bash script to help with using `mkcert` once you have it installed for the sole purpose of creating SSL certificates. It's available in this repository [here][generate-sh]. The script itself is heavily commented and can be used to install and create a domain certificate all at once. I'd encourage you to get familiar with the script and ultimately read through the [`mkcert` repository][mkcert-github] documentation to have a thorough understanding of how to utilize this tool. I will, however, show you how I use it below.
+I created a bash script to help with using `mkcert` once you have it installed for the sole purpose of creating SSL certificates. It's available in this repository [here][generate-sh]. The script itself is heavily commented and can be used to install and create a domain certificate all at once.
+
+I'd encourage you to get familiar with the script and ultimately read through the [`mkcert` repository][mkcert-github] documentation to have a thorough understanding of how to utilize this tool. I will, however, show you how I use it below.
 
 ```bash
 mkcert -install # to create a new local CA
@@ -115,11 +117,11 @@ To create certificates that I'll use with my Traefik container, I run the follow
 ./traefik/certs/generate.sh "*.local.test"
 ```
 
-The reason I use a wildcard domain is because of how I service names as subdomains. Using a wildcard certificate will allow the creation of one certificate for a number of subdomains.
+The reason I use a wildcard domain is because of how I use service names as subdomains. Using a wildcard certificate will allow the creation of one certificate for a number of subdomains.
 
 ### Usage in Mobile Development
 
-When creating websites that should be mobile first, I like to have the experience of entering qualified domain names. But for me to implement SSL, and to have the certificates trusted on my mobile device(s), I have to have the root CA installed on my device(s) as well. It is the `rootCA.pem` file in the folder printer by the command `mkcert -CAROOT`. The developers of `mkcert` explained it rather well [in their documentation][mkcert-mobile]. In a nutshell:
+When creating websites that should be mobile-first, I like to have the experience of entering qualified domain names. But for me to implement SSL, and to have the certificates trusted on my mobile device(s), I have to have the root CA installed on my device(s) as well. It is the `rootCA.pem` file in the folder printer by the command `mkcert -CAROOT`. The developers of `mkcert` explained it rather well [in their documentation][mkcert-mobile]. In a nutshell:
 
 > On iOS, you can either use AirDrop, email the CA to yourself, or serve it from an HTTP server. After installing it, you must enable full trust in it.
 > For Android, you will have to install the CA and then enable user roots in the development build of your app.
@@ -140,7 +142,7 @@ I use Traefik in development and production, as well. I find it easier to transi
 
 ### Setting Up Traefik
 
-1. Within the [traefik folder](traefik), there is an `.env.example` file that will need to be copied to a `.env` file similar to the overall [configuration](#configuration) step. The only difference is that this `.env` is private to the Traefik container that will be created.
+1. Within the [traefik directory](traefik), there is a `.env.example` file that will need to be copied to a `.env` file similar to the overall [configuration](#configuration) step. The only difference is that this `.env` is private to the Traefik container that will be created.
 2. Depending on the environment, either the [`traefik.development.yaml`](traefik/traefik.development.yaml) or the [`traefik.production.yaml`](traefik/traefik.production.yaml) file will need to be copied to a `traefik.yaml` file. Of course, since we are looking at local development, we will go with the former. This is the configuration file for the Traefik container that will be created.
 
 ```bash
