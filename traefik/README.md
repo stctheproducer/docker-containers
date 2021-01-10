@@ -4,8 +4,6 @@ I use Traefik using several different files for services and middlewares.
 
 <h2>Features</h2>
 
----
-
 - [Setting Up SSL and Traefik](#setting-up-ssl-and-traefik)
   - [Creating the `dynamic` Directory](#creating-the-dynamic-directory)
   - [Linking the SSL Certificates to Traefik](#linking-the-ssl-certificates-to-traefik)
