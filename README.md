@@ -1,6 +1,12 @@
 # Docker Containers for Local Development
 
-[![HitCount][hits-count-img]][hits-count] [![Follow me on GitHub][github-follow-img]][github-profile] [![Follow me on Twitter][twitter-follow-img]][twitter-profile]
+[![HitCount][hits-count-img]][hits-count]
+[![Follow me on GitHub][github-follow-img]][github-profile]
+[![Follow me on Twitter][twitter-follow-img]][twitter-profile]
+
+<!-- [![Tests passing][gh-actions-img]][gh-actions] -->
+[![Issues][gh-issues-img]][gh-issues]
+[![Pull requests][gh-pulls-img]][gh-pulls]
 
 This repo contains docker containers I use mostly for JavaScript development but they can be used for just about anything. Below is a breakdown of how I make use of most of them. This should give you an idea of how I try to implement DevOps even on my local machine.
 
@@ -188,3 +194,9 @@ docker-compose down
 [github-follow-img]: https://img.shields.io/github/followers/stctheproducer?label=Follow&style=social
 [twitter-profile]: https://twitter.com/stctheproducer
 [twitter-follow-img]: https://img.shields.io/twitter/follow/stctheproducer?label=Follow&style=social
+[gh-actions]: https://github.com/stctheproducer/docker-containers/actions
+[gh-actions-img]: https://github.com/stctheproducer/docker-containers/workflows/Test/badge.svg
+[gh-issues]: https://github.com/stctheproducer/docker-containers/issues
+[gh-issues-img]: https://img.shields.io/github/issues/stctheproducer/docker-containers?color=00ff
+[gh-pulls]: https://github.com/stctheproducer/docker-containers/pulls
+[gh-pulls-img]: https://img.shields.io/github/issues-pr/stctheproducer/docker-containers?color=00ff
