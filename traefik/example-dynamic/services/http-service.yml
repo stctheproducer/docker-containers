@@ -2,13 +2,14 @@
 http:
   routers:
     serviceName:
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - web
-      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: serviceName
     serviceName-secure:
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - websecure
       tls: {}

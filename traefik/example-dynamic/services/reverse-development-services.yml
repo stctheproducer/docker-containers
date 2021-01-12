@@ -1,0 +1,19 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+#  This is for services you want to expose to a server using reverse SSH tunneling
+http:
+  routers:
+    serviceName-reverse:
+      rule: Host(`serviceName.{{env "TUNNEL_URL"}}`)
+      entryPoints:
+        - websecure
+      service: serviceName
+    dockerServiceName-reverse:
+      rule: Host(`dockerServiceName.{{env "TUNNEL_URL"}}`)
+      entryPoints:
+        - websecure
+      service: dockerServiceName@docker
+  services:
+    serviceName:
+      loadBalancer:
+        servers:
+          - url: http://192.168.0.1:{{PORT_NUMBER_OF_SERVICE}}
