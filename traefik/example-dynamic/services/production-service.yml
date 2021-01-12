@@ -1,0 +1,32 @@
+http:
+  routers:
+    serviceName:
+      rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsEncryptDns
+
+      middlewares:
+        # - basic-auth
+        # - secure-headers
+        # - rate-limit
+      service: serviceName
+    dockerServiceName:
+      rule: Host(`dockerServiceName.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsEncryptDns
+
+      middlewares:
+        # - basic-auth
+        # - secure-headers
+        # - rate-limit
+      service: dockerServiceName@docker
+
+  services:
+    serviceName:
+      loadBalancer:
+        servers:
+          - url: http://192.168.0.1:{{PORT_NUMBER_OF_LOCAL_MACHINE}}

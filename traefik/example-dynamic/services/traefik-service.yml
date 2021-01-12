@@ -2,14 +2,14 @@
 http:
   routers:
     traefik-long:
-      rule: Host(`tk.{{env "DOMAIN_NAME"}}`)
+      rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: api@internal
     traefik-long-secure:
-      rule: Host(`tk.{{env "DOMAIN_NAME"}}`)
+      rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - websecure
       tls:
@@ -19,7 +19,7 @@ http:
             sans:
               - '*.{{env "DOMAIN_NAME"}}'
       # middlewares:
-      #   - secure-headers@file
-      #   - rate-limit@file
-      #   - basic-auth@file
+      #   - secure-headers
+      #   - rate-limit
+      #   - basic-auth
       service: api@internal

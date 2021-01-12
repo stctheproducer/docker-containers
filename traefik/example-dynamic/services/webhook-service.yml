@@ -6,7 +6,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: webhook-{{env "COMPOSE_PROJECT_NAME"}}@docker
     webhook-secure:
       rule: Host(`webhook.{{env "DOMAIN_NAME"}}`)
@@ -19,5 +19,5 @@ http:
       entryPoints:
         - websecure
       middlewares:
-        - pathstrip@file
+        - pathstrip
       service: webhook-{{env "COMPOSE_PROJECT_NAME"}}@docker
