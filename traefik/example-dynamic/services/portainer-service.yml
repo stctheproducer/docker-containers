@@ -6,7 +6,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: portainer-{{env "COMPOSE_PROJECT_NAME"}}@docker
     portainer-secure:
       rule: Host(`portainer.{{env "DOMAIN_NAME"}}`)

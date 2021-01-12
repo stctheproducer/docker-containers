@@ -1,0 +1,15 @@
+http:
+  routers:
+    traefik:
+      rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
+      entryPoints:
+        - websecure
+        - websecure
+      tls:
+        certResolver: letsEncryptDns
+
+      middlewares:
+        - basic-auth
+        # - secure-headers
+        # - rate-limit
+      service: api@internal

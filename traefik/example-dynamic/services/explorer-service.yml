@@ -5,7 +5,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: explorer-{{env "COMPOSE_PROJECT_NAME"}}@docker
     explorer-secure:
       rule: Host(`explorer.{{env "DOMAIN_NAME"}}`)
@@ -18,5 +18,5 @@ http:
       entryPoints:
         - websecure
       middlewares:
-        - pathstrip@file
+        - pathstrip
       service: explorer-{{env "COMPOSE_PROJECT_NAME"}}@docker

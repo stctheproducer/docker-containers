@@ -6,7 +6,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
     serviceName-secure:
       rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)

@@ -6,7 +6,7 @@ http:
       entryPoints:
         - web
       middlewares:
-        - redirecthttp@file
+        - redirecthttp
       service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
     serviceName-secure:
       rule: Host(`serviceName.{{env "DOMAIN_NAME"}}`)
@@ -19,14 +19,14 @@ http:
       entryPoints:
         - websecure
       middlewares:
-        - pathstrip@file
+        - pathstrip
       service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
     serviceName-reverse:
       rule: Host(`serviceName.{{env "TUNNEL_URL"}}`)
       entryPoints:
         - websecure
       middlewares:
-        - pathstrip@file
+        - pathstrip
       service: serviceName-{{env "COMPOSE_PROJECT_NAME"}}@docker
   # services:
   #   serviceName:
