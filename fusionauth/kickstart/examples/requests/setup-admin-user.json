@@ -1,0 +1,20 @@
+{
+  "method": "POST",
+  "url": "/api/user/registration",
+  "body": {
+    "user": {
+      "firstName": "#{adminFirstName}",
+      "lastName": "#{adminLastName}",
+      "email": "#{adminEmail}",
+      "mobilePhone": "#{adminMobilePhone}",
+      "password": "#{adminPassword}",
+      "data": {
+        "Company": "#{authCompany}"
+      }
+    },
+    "registration": {
+      "applicationId": "#{FUSIONAUTH_APPLICATION_ID}",
+      "roles": ["admin"]
+    }
+  }
+}

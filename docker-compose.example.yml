@@ -427,21 +427,24 @@ services:
 
   ### FUSIONAUTH ########################################
   fusionauth:
-    image: fusionauth/fusionauth-app:latest
+    image: "fusionauth/fusionauth-app:${FUSIONAUTH_VERSION}"
     restart: unless-stopped
     volumes:
       - fusionauth:/usr/local/fusionauth/config
+      - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
+    env_file: ./fusionauth/.env
     environment:
       # DATABASE_URL: ${API_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${API_DATABASE_NAME}
       # DATABASE_ROOT_USER: ${API_DATABASE_ROOT_USER}
       # DATABASE_ROOT_PASSWORD: ${API_DATABASE_ROOT_PASSWORD}
-      DATABASE_USER: ${API_DATABASE_USER}
+      DATABASE_USERNAME: ${API_DATABASE_USER}
       DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
-      FUSIONAUTH_MEMORY: ${FUSIONAUTH_MEMORY}
-      # FUSIONAUTH_SEARCH_SERVERS: ${FUSIONAUTH_SEARCH_SERVERS}
-      FUSIONAUTH_SEARCH_ENGINE_TYPE: ${FUSIONAUTH_SEARCH_ENGINE_TYPE}
-      FUSIONAUTH_RUNTIME_MODE: ${FUSIONAUTH_RUNTIME_MODE}
-      FUSIONAUTH_URL: ${FUSIONAUTH_URL}
+      FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
+      # SEARCH_SERVERS: ${SEARCH_SERVERS}
+      SEARCH_TYPE: ${SEARCH_TYPE}
+      FUSIONAUTH_APP_RUNTIME_MODE: ${FUSIONAUTH_APP_RUNTIME_MODE}
+      FUSIONAUTH_APP_URL: ${FUSIONAUTH_APP_URL}
+      FUSIONAUTH_APP_KICKSTART_FILE: ${FUSIONAUTH_APP_KICKSTART_FILE}
     depends_on:
       - ${API_DATABASE_CLIENT}
       # - elasticsearch

@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "url": "/api/email/template",
+  "body": {
+    "emailTemplate": {
+      "defaultFromName": "#{defaultEmailFromName}",
+      "defaultSubject": "Reminder: Notice of your Consent",
+      "defaultHtmlTemplate": "@{examples/emails/coppa-email-plus-notice.html.ftl}",
+      "defaultTextTemplate": "@{examples/emails/coppa-email-plus-notice.txt.ftl}",
+      "fromEmail": "#{defaultEmailFrom}",
+      "name": "COPPA Notice Reminder New"
+    }
+  }
+}
