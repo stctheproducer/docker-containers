@@ -5,10 +5,10 @@
     "emailTemplate": {
       "defaultFromName": "#{defaultEmailFromName}",
       "defaultSubject": "Notice of your Consent",
-      "defaultHtmlTemplate": "@{examples/emails/coppa-notice.html.ftl}",
-      "defaultTextTemplate": "@{examples/emails/coppa-notice.txt.ftl}",
+      "defaultHtmlTemplate": "coppa-notice.html.ftl",
+      "defaultTextTemplate": "coppa-notice.txt.ftl",
       "fromEmail": "#{defaultEmailFrom}",
-      "name": "COPPA Notice New"
+      "name": "COPPA Notice"
     }
   }
 }

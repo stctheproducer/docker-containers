@@ -1,8 +1,6 @@
 version: "3.7"
 
 networks:
-  frontend:
-    driver: "${NETWORKS_DRIVER}"
   backend:
     driver: "${NETWORKS_DRIVER}"
   proxy:
@@ -221,6 +219,7 @@ services:
       MONGO_INITDB_DATABASE: ${API_DATABASE_NAME}
     volumes:
       - "${DATA_PATH_HOST}/mongo:/data/db"
+      - "./mongo/mongod.conf:/etc/mongod.conf"
     networks:
       backend: {}
       backdocker:
@@ -467,6 +466,25 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer:/data"
     networks:
+      - dockernet
+    labels:
+      - "traefik.enable=true"
+
+  ### LOGOWL ########################################
+  logowl:
+    image: jz222/logowl:${LOGOWL_VERSION}
+    environment:
+      SECRET: ${LOGOWL_SECRET}
+      MONGOURI: "mongodb://${LOGOWL_DB_USER}:${LOGOWL_DB_PASSWORD}@mongo/${LOGOWL_MONGO_DB_NAME}?retryWrites=false"
+      MONGO_DB_NAME: ${LOGOWL_MONGO_DB_NAME}
+      CLIENT_URL: ${LOGOWL_CLIENT_URL}
+      MONTHLY_REQUEST_LIMIT: ${LOGOWL_MONTHLY_REQUEST_LIMIT}
+      IS_SELFHOSTED: ${LOGOWL_IS_SELFHOSTED}
+      MAILGUN_PRIVATE_KEY: ${MAILGUN_PRIVATE_KEY}
+      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+      MAILGUN_API_BASE: ${MAILGUN_API_BASE}
+    networks:
+      - backend
       - dockernet
     labels:
       - "traefik.enable=true"

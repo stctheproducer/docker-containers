@@ -61,7 +61,7 @@ certificatesResolvers:
     acme:
       email: email@address.com
       # Staging Server
-      caServer: https://acme-staging-v02.api.letsencryptorg/directory"
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory"
       # Production server
       # caServer: https://acme-v02.api.letsencrypt.org/directory
       storage: /etc/traefik/acme/acme.json

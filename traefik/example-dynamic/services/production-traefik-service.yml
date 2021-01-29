@@ -4,7 +4,6 @@ http:
       rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - websecure
-        - websecure
       tls:
         certResolver: letsEncryptDns
 

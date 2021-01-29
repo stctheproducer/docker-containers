@@ -5,10 +5,10 @@
     "emailTemplate": {
       "defaultFromName": "#{defaultEmailFromName}",
       "defaultSubject": "Verify your Registration",
-      "defaultHtmlTemplate": "@{examples/emails/registration-verification.html.ftl}",
-      "defaultTextTemplate": "@{examples/emails/registration-verification.txt.ftl}",
+      "defaultHtmlTemplate": "registration-verification.html.ftl",
+      "defaultTextTemplate": "registration-verification.txt.ftl",
       "fromEmail": "#{defaultEmailFrom}",
-      "name": "Registration Verification New"
+      "name": "Registration Verification"
     }
   }
 }
