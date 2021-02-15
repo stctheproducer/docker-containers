@@ -1,11 +1,14 @@
 # Dynamic configuration
 tls:
   certificates:
-    - certFile: "/certs/_wildcard.local.test.pem"
-      keyFile: "/certs/_wildcard.local.test-key.pem"
-    # - certFile: "/certs/www.domain1.andrew.pem"
-    # keyFile: "/certs/www.domain1.andrew-key.pem"
-    # - certFile: "/certs/_wildcard.domain2.andrew.pem"
-    # keyFile: "/certs/_wildcard.domain2.andrew-key.pem"
-    # - certFile: "/certs/www.domain3.andrew+2.pem"
-    # keyFile: "/certs/www.onlytease.andrew+2-key.pem"
+  # - certFile: "/certs/www.domain1.andrew.pem"
+  # keyFile: "/certs/www.domain1.andrew-key.pem"
+  # - certFile: "/certs/_wildcard.domain2.andrew.pem"
+  # keyFile: "/certs/_wildcard.domain2.andrew-key.pem"
+  # - certFile: "/certs/www.domain3.andrew+2.pem"
+  # keyFile: "/certs/www.onlytease.andrew+2-key.pem"
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/certs/_wildcard.local.test.pem"
+        keyFile: "/certs/_wildcard.local.test-key.pem"

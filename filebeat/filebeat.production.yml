@@ -1,0 +1,51 @@
+############################# Filebeat #####################################
+
+filebeat.inputs:
+  - type: log
+    paths:
+      - /usr/share/filebeat/logs/apps/**/*.json
+    fields:
+      logzio_codec: json
+      token: ${LOGZIO_TOKEN}
+      type: traefik
+      environment: development
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+  - type: log
+    paths:
+      - /usr/share/filebeat/logs/apps/**/*.log
+    fields:
+      logzio_codec: plain
+      token: ${LOGZIO_TOKEN}
+      type: apache
+      environment: development
+    fields_under_root: true
+    encoding: utf-8
+    ignore_older: 3h
+
+#For version 7 and higher
+filebeat.registry.path: /var/lib/filebeat
+
+#The following processors are to ensure compatibility with version 7
+processors:
+  - rename:
+      fields:
+        - from: "agent"
+          to: "beat_agent"
+      ignore_missing: true
+  - rename:
+      fields:
+        - from: "log.file.path"
+          to: "source"
+      ignore_missing: true
+
+############################# Output ##########################################
+
+output:
+  logstash:
+    hosts:
+      - "${LOGSTASH_HOST}"
+    ssl:
+      certificate_authorities:
+        - "/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt"

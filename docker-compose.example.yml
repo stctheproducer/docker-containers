@@ -267,7 +267,14 @@ services:
 
   ### Webhook ###################################################
   webhook:
-    build: ./webhook
+    build:
+      context: ./webhook
+      args:
+        - "WEBHOOK_VERSION=${WEBHOOK_VERSION}"
+    restart: unless-stopped
+    environment:
+      DRONE_WEBHOOK_SECRET: ${DRONE_WEBHOOK_SECRET}
+      DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
     volumes:
       - "${WEBHOOK_HOOKS_DIR}:/etc/webhook"
       - "${WEBHOOK_SCRIPTS_DIR}:/opt/scripts"
@@ -433,15 +440,16 @@ services:
       - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
     env_file: ./fusionauth/.env
     environment:
-      # DATABASE_URL: ${API_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${API_DATABASE_NAME}
-      # DATABASE_ROOT_USER: ${API_DATABASE_ROOT_USER}
-      # DATABASE_ROOT_PASSWORD: ${API_DATABASE_ROOT_PASSWORD}
-      DATABASE_USERNAME: ${API_DATABASE_USER}
-      DATABASE_PASSWORD: ${API_DATABASE_PASSWORD}
+      # DATABASE_URL: ${FUSIONAUTH_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${FUSIONAUTH_DATABASE_NAME}
+      # DATABASE_USERNAME: ${FUSIONAUTH_DATABASE_USER}
+      # DATABASE_PASSWORD: ${FUSIONAUTH_DATABASE_PASSWORD}
+      DATABASE_ROOT_USERNAME: ${API_DATABASE_USER}
+      DATABASE_ROOT_PASSWORD: ${API_DATABASE_PASSWORD}
       FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
       # SEARCH_SERVERS: ${SEARCH_SERVERS}
       SEARCH_TYPE: ${SEARCH_TYPE}
       FUSIONAUTH_APP_RUNTIME_MODE: ${FUSIONAUTH_APP_RUNTIME_MODE}
+      FUSIONAUTH_APP_SILENT_MODE: ${FUSIONAUTH_APP_SILENT_MODE}
       FUSIONAUTH_APP_URL: ${FUSIONAUTH_APP_URL}
       FUSIONAUTH_APP_KICKSTART_FILE: ${FUSIONAUTH_APP_KICKSTART_FILE}
     depends_on:
@@ -450,7 +458,7 @@ services:
       - traefik
     networks:
       dockernet:
-        ipv4_address: 192.168.0.10
+        ipv4_address: 192.168.1.10
       backend: {}
     # ports:
     # - 9011:${FUSIONAUTH_CONTAINER_PORT}
@@ -475,7 +483,8 @@ services:
     image: jz222/logowl:${LOGOWL_VERSION}
     environment:
       SECRET: ${LOGOWL_SECRET}
-      MONGOURI: "mongodb://${LOGOWL_DB_USER}:${LOGOWL_DB_PASSWORD}@mongo/${LOGOWL_MONGO_DB_NAME}?retryWrites=false"
+      PORT: ${LOGOWL_CONTAINER_PORT}
+      MONGO_URI: "mongodb://${LOGOWL_DB_USER}:${LOGOWL_DB_PASSWORD}@mongo/${LOGOWL_MONGO_DB_NAME}?retryWrites=false"
       MONGO_DB_NAME: ${LOGOWL_MONGO_DB_NAME}
       CLIENT_URL: ${LOGOWL_CLIENT_URL}
       MONTHLY_REQUEST_LIMIT: ${LOGOWL_MONTHLY_REQUEST_LIMIT}

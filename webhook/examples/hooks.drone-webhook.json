@@ -1,0 +1,22 @@
+{
+  "id": "test-webhook",
+  "execute-command": "/opt/scripts/",
+  "command-working-directory": "/opt/deploy",
+  "response-message": "I got the payload!",
+  "response-headers": [
+    {
+      "name": "Access-Control-Allow-Origin",
+      "value": "*"
+    }
+  ],
+  "trigger-rule": {
+    "match": {
+      "type": "payload-hash-sha256",
+      "secret": "{{ getenv \"DRONE_WEBHOOK_SECRET\" | js }}",
+      "parameter": {
+        "source": "header",
+        "name": "Authorization"
+      }
+    }
+  }
+}

@@ -198,7 +198,7 @@ http:
     local:
       loadBalancer:
         servers:
-          - url: http://192.168.0.1:8000
+          - url: http://192.168.1.1:8000
 ```
 
 On your local machine you would have a configuration something like this (container service):

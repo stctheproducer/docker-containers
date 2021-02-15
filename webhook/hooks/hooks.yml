@@ -1,0 +1,41 @@
+# Webhook for testing
+- id: test-webhook
+  execute-command: "/opt/scripts/webhook-test.sh"
+  command-working-directory: "/opt/deploy"
+  pass-arguments-to-command:
+    - source: payload
+      name: name
+  response-headers:
+    - name: Access-Control-Allow-Origin
+      value: "*"
+  http-methods:
+    - POST
+  include-command-output-in-response: true
+  include-command-output-in-response-on-error: true
+
+# Web hook when for drone
+- id: drone-webhook
+  execute-command: "/opt/scripts/drone-slack.sh"
+  # command-working-directory: "/opt/deploy"
+  # pass-arguments-to-command:
+  #   - source: payload
+  #     name: name
+  response-headers:
+    - name: Access-Control-Allow-Origin
+      value: '{{ getenv "DRONE_SERVER_HOST" }}'
+  http-methods:
+    - POST
+  include-command-output-in-response: true
+  include-command-output-in-response-on-error: true
+  trigger-rule:
+    match:
+      type: payload-hash-sha256
+      secret: '{{ getenv "DRONE_WEBHOOK_SECRET" | js }}'
+      parameter:
+        source: header
+        name: Authorization
+  trigger-rule-mismatch-http-response-code: 400
+
+- id: second-webhook
+
+- id: third-webhook

@@ -1,7 +1,9 @@
-FROM almir/webhook
+ARG WEBHOOK_VERSION=2.8.0
 
-RUN  apk --update --upgrade add git bash
+FROM almir/webhook:${WEBHOOK_VERSION}
 
-COPY /hooks/hooks.example.json /etc/webhook/hooks.json
+RUN  apk --update --upgrade add git bash jq
 
-CMD ["-verbose", "-hooks=/etc/webhook/hooks.json", "-hotreload"]
+COPY ./hooks/hooks.yml /etc/webhook/hooks.yml
+
+CMD ["-verbose", "-hooks=/etc/webhook/hooks.yml", "-hotreload", "-template"]
