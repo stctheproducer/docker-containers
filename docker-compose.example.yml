@@ -160,7 +160,7 @@ services:
     networks:
       backend: {}
       backdocker:
-        ipv4_address: 192.168.90.2
+        ipv4_address: 192.168.90.20
 
   ### MariaDB ##############################################
   mariadb:
@@ -499,3 +499,46 @@ services:
       - dockernet
     labels:
       - "traefik.enable=true"
+
+  ### DRONE CI ########################################
+  drone:
+    image: drone/drone:${DRONE_VERSION}
+    restart: always
+    environment:
+      DRONE_DATABASE_DRIVER: ${DRONE_DATABASE_DRIVER}
+      DRONE_DATABASE_DATASOURCE: ${DRONE_DATABASE_DRIVER}://${DRONE_DATABASE_USER}:${DRONE_DATABASE_PASSWORD}@${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${DRONE_DATABASE_NAME}?sslmode=disable
+      DRONE_DATABASE_SECRET: ${DRONE_DATABASE_SECRET}
+      DRONE_GITHUB_CLIENT_ID: ${DRONE_GITHUB_CLIENT_ID}
+      DRONE_GITHUB_CLIENT_SECRET: ${DRONE_GITHUB_CLIENT_SECRET}
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+      DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
+      DRONE_SERVER_PROTO: ${DRONE_SERVER_PROTO}
+      # DRONE_WEBHOOK_ENDPOINT: ${DRONE_WEBHOOK_ENDPOINT}
+      # DRONE_WEBHOOK_EVENTS: ${DRONE_WEBHOOK_EVENTS}
+      # DRONE_WEBHOOK_SECRET: ${DRONE_WEBHOOK_SECRET}
+    volumes:
+      - "drone:/data"
+    networks:
+      dockernet:
+        ipv4_address: 192.168.1.5
+      backend: {}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.drone.rule=Host(`drone.stctheproducer.com`)"
+      - "traefik.http.routers.drone.entrypoints=websecure"
+      - "traefik.http.services.drone.loadbalancer.server.port=80"
+
+  drone-runner:
+    image: drone/drone-runner-digitalocean
+    restart: always
+    environment:
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+      DRONE_RPC_HOST: ${DRONE_RPC_HOST}
+      DRONE_SERVER_PROTO: ${DRONE_SERVER_PROTO}
+      DRONE_PUBLIC_KEY_FILE: ${DRONE_PUBLIC_KEY_FILE}
+      DRONE_PRIVATE_KEY_FILE: ${DRONE_PRIVATE_KEY_FILE}
+    volumes:
+      - "/home/${USER}/.ssh/drone_runner:${DRONE_PRIVATE_KEY_FILE}"
+      - "/home/${USER}/.ssh/drone_runner.pub:${DRONE_PUBLIC_KEY_FILE}"
+    networks:
+      - dockernet
