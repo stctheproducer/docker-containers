@@ -1,0 +1,24 @@
+- id: pull-general-alliance-api-repo
+  execute-command: "/opt/scripts/pull-general-alliance-api-repo.sh"
+  command-working-directory: "/opt/deploy/general_alliance_API_lumen"
+  response-headers:
+    - name: Access-Control-Allow-Origin
+      value: "*"
+  http-methods:
+    - POST
+  include-command-output-in-response: true
+  include-command-output-in-response-on-error: true
+  trigger-rule:
+    and:
+      - match:
+          type: payload-hash-sha1
+          secret: hM5AlbrYub7axDftuMwN2voggiKCpolwN8rQjlb57ow
+          parameter:
+            source: header
+            name: X-Hub-Signature
+      - match:
+          type: value
+          value: refs/heads/main
+          parameter:
+            source: payload
+            name: ref

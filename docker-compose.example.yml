@@ -279,6 +279,8 @@ services:
       - "${WEBHOOK_HOOKS_DIR}:/etc/webhook"
       - "${WEBHOOK_SCRIPTS_DIR}:/opt/scripts"
       - "${APP_PROJECTS}:/opt/deploy"
+      - "~/.ssh:/home/www/.ssh:ro"
+      - "./logs/apps/webhook.log:/home/www/logs/webhook.log"
     networks:
       - dockernet
     labels:

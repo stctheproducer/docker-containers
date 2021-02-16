@@ -4,6 +4,7 @@ traefik/traefik.yaml
 traefik/dnschallenge/*
 traefik/.env
 webhook/hooks/hooks.json
+webhook/hooks/hooks.yml
 webhook/scripts/*.sh
 mongo/mongod.conf
 secrets/*.secret
