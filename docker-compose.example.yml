@@ -275,12 +275,14 @@ services:
     environment:
       DRONE_WEBHOOK_SECRET: ${DRONE_WEBHOOK_SECRET}
       DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
+      SSH_AUTH_SOCK: /ssh-agent
     volumes:
       - "${WEBHOOK_HOOKS_DIR}:/etc/webhook"
       - "${WEBHOOK_SCRIPTS_DIR}:/opt/scripts"
       - "${APP_PROJECTS}:/opt/deploy"
-      - "~/.ssh:/home/www/.ssh:ro"
-      - "./logs/apps/webhook.log:/home/www/logs/webhook.log"
+      - "${SSH_AUTH_SOCK}:/ssh-agent"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./logs/apps/webhook.log:/root/logs/webhook.log"
     networks:
       - dockernet
     labels:
