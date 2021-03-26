@@ -11,6 +11,8 @@ networks:
     external: true
 
 volumes:
+  drone:
+    driver: "${VOLUMES_DRIVER}"
   strapi:
     driver: "${VOLUMES_DRIVER}"
   mysql:
@@ -147,6 +149,7 @@ services:
       context: ./mysql
       args:
         - "MYSQL_VERSION=${MYSQL_VERSION}"
+    restart: unless-stopped
     command: "--default-authentication-plugin=mysql_native_password"
     environment:
       - "MYSQL_DATABASE=${API_DATABASE_NAME}"
