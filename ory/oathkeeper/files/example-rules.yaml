@@ -1,0 +1,62 @@
+- id: allow-anonymous-with-header-mutator
+  version: v0.38.9-beta.1
+  upstream:
+    url: https://httpbin.org/anything/header
+  match:
+    url: http://gwproxy.dev.test/anything/header
+    methods:
+      - GET
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: header
+      config:
+        headers:
+          X-User: "{{ print .Subject }}"
+
+- id: deny-anonymous
+  version: v0.38.9-beta.1
+  upstream:
+    url: https://httpbin.org/anything/deny
+  match:
+    url: http://gwproxy.dev.test/anything/deny
+    methods:
+      - GET
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: deny
+  mutators:
+    - handler: noop
+  errors:
+    - handler: json
+      config:
+        when:
+          - request:
+              header:
+                accept:
+                  - application/json
+    - handler: redirect
+      config:
+        when:
+          - request:
+              header:
+                accept:
+                  - text/*
+
+- id: allow-anonymous-with-id-token-mutator
+  version: v0.38.9-beta.1
+  upstream:
+    url: https://httpbin.org/anything/id_token
+  match:
+    url: http://gwproxy.dev.test/anything/id_token
+    methods:
+      - GET
+  authenticators:
+    - handler: anonymous
+  authorizer:
+    handler: allow
+  mutators:
+    - handler: id_token

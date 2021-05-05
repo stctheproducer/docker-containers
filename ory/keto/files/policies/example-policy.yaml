@@ -1,0 +1,9 @@
+- id: example-policy
+  description: "An example policy"
+  subjects:
+    - alice
+  resources:
+    - "blog_posts:my-first-blog-post"
+  actions:
+    - delete
+  effect: allow
