@@ -57,14 +57,14 @@ services:
     image: portainer/portainer-ce:alpine
     container_name: portainer
     restart: always
-    depends_on:
-      - traefik
     command: '--admin-password=${PORTAINER_ADMIN_PASSWORD}'
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - portainer:/data
     networks:
       - dockernet
+      - proxy
+    depends_on:
+      - traefik
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)'
