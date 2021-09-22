@@ -1,10 +1,8 @@
-version: "3.7"
+# @format
+
+version: '3.9'
 
 networks:
-  frontend:
-    driver: ${NETWORKS_DRIVER}
-  backend:
-    driver: ${NETWORKS_DRIVER}
   # docker network create --subnet 192.168.90.0/24 --gateway 192.168.90.1 backdocker
   dockernet:
     external: true
@@ -25,9 +23,9 @@ services:
     depends_on:
       - traefik
     networks:
-      - frontend
+      - dockernet
     labels:
-      - "traefik.enable=true"
+      - 'traefik.enable=true'
 
   ###############################################
   # Adonis Microservices ################################################
@@ -44,7 +42,7 @@ services:
     depends_on:
       - ${API_DATABASE_CLIENT}
     networks:
-      - frontend
-      - backend
+      - dockernet
+      - backdocker
     labels:
-      - "traefik.enable=true"
+      - 'traefik.enable=true'

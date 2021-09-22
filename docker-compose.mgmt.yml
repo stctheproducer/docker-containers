@@ -1,0 +1,73 @@
+# @format
+
+version: '3.9'
+
+networks:
+  backend:
+    driver: '${NETWORKS_DRIVER}'
+  proxy:
+    driver: '${NETWORKS_DRIVER}'
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+volumes:
+  portainer:
+    driver: '${VOLUMES_DRIVER}'
+
+services:
+  ### TRAEFIK #########################################
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1
+    networks:
+      - proxy
+
+  traefik:
+    build:
+      context: ./traefik
+      args:
+        - 'TRAEFIK_VERSION=${TRAEFIK_VERSION}'
+    restart: always
+    env_file: ./traefik/.env
+    volumes:
+      - './traefik/acme:/etc/traefik/acme'
+      - './traefik/traefik.yaml:/traefik.yaml'
+      - './traefik/dynamic/:/etc/traefik/dynamic'
+      - './traefik/certs:/certs'
+      - './logs/traefik:/logs'
+    ports:
+      - '${TRAEFIK_HOST_HTTP_PORT}:80'
+      - '${TRAEFIK_HOST_HTTPS_PORT}:443'
+    networks:
+      - dockernet
+      - proxy
+    depends_on:
+      - socket-proxy
+    labels:
+      - 'traefik.enable=true'
+
+  ### PORTAINER ########################################
+  portainer:
+    image: portainer/portainer-ce:alpine
+    container_name: portainer
+    restart: always
+    depends_on:
+      - traefik
+    command: '--admin-password=${PORTAINER_ADMIN_PASSWORD}'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.portainer.entrypoints=websecure'
+      - 'traefik.http.routers.portainer.tls=true'
+      - 'traefik.http.services.portainer.loadbalancer.server.port=${PORTAINER_UI_PORT}'
