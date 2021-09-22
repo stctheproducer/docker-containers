@@ -21,6 +21,8 @@ volumes:
     driver: '${VOLUMES_DRIVER}'
   redis:
     driver: '${VOLUMES_DRIVER}'
+  elasticsearch:
+    driver: '${VOLUMES_DRIVER}'
 
 services:
   ### MySQL ################################################
