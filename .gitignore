@@ -1,5 +1,7 @@
 .env
 docker-compose.yml
+docker-compose.*.yml
+!compose-files/*
 traefik/traefik.yaml
 traefik/dnschallenge/*
 traefik/.env

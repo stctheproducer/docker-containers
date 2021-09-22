@@ -3,9 +3,9 @@
 version: '3.9'
 
 networks:
-  backend:
-    driver: '${NETWORKS_DRIVER}'
   proxy:
+    driver: '${NETWORKS_DRIVER}'
+  portainer-proxy:
     driver: '${NETWORKS_DRIVER}'
   dockernet:
     external: true
@@ -53,17 +53,45 @@ services:
       - 'traefik.enable=true'
 
   ### PORTAINER ########################################
+  portainer-proxy:
+    image: tecnativa/docker-socket-proxy
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONTAINERS: 1
+      BUILD: 1
+      COMMIT: 1
+      CONFIGS: 1
+      DISTRIBUTION: 1
+      EXEC: 1
+      IMAGES: 1
+      INFO: 1
+      NETWORKS: 1
+      NODES: 1
+      PLUGINS: 1
+      SERVICES: 1
+      SESSION: 1
+      SWARM: 1
+      SYSTEM: 1
+      TASKS: 1
+      VOLUMES: 1
+      POST: 1
+    networks:
+      - portainer-proxy
+
   portainer:
     image: portainer/portainer-ce:alpine
     container_name: portainer
     restart: always
     command: '--admin-password=${PORTAINER_ADMIN_PASSWORD}'
     volumes:
-      - portainer:/data
+      - '${DATA_PATH_HOST}/portainer:/data'
     networks:
       - dockernet
-      - proxy
+      - portainer-proxy
     depends_on:
+      - portainer-proxy
       - traefik
     labels:
       - 'traefik.enable=true'

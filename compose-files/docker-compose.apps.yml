@@ -3,25 +3,42 @@
 version: '3.9'
 
 networks:
-  backend:
-    driver: '${NETWORKS_DRIVER}'
   dockernet:
     external: true
   backdocker:
     external: true
 
 volumes:
-  drone:
-    driver: '${VOLUMES_DRIVER}'
-  strapi:
-    driver: '${VOLUMES_DRIVER}'
   webhook:
     driver: '${VOLUMES_DRIVER}'
   fusionauth:
     driver: '${VOLUMES_DRIVER}'
 
 services:
-  # https://github.com/soyuka/explorer.git
+  # WHOAMI ################################################
+  whoami:
+    image: emilevauge/whoami
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
+  ## Application ################################################
+  frontend:
+    restart: always
+    build:
+      context: ../frontend/
+    volumes:
+      - ${APP_CODE_PATH_CONTAINER}/app/node_modules
+      - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
+    env_file: ../frontend/.env
+    depends_on:
+      - traefik
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
   # EXPLORER ################################################
   explorer:
     image: stctheproducer/explorer
@@ -31,14 +48,6 @@ services:
       - dockernet
     volumes:
       - './explorer/examples:/opt/explorer'
-    labels:
-      - 'traefik.enable=true'
-
-  # WHOAMI ################################################
-  whoami:
-    image: emilevauge/whoami
-    networks:
-      - dockernet
     labels:
       - 'traefik.enable=true'
 
@@ -85,124 +94,6 @@ services:
       - dockernet
     labels:
       - 'traefik.enable=true'
-
-  ### FUSIONAUTH ########################################
-  fusionauth:
-    image: 'fusionauth/fusionauth-app:${FUSIONAUTH_VERSION}'
-    restart: unless-stopped
-    volumes:
-      - fusionauth:/usr/local/fusionauth/config
-      - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
-    env_file: ./fusionauth/.env
-    environment:
-      DATABASE_URL: ${FUSIONAUTH_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${FUSIONAUTH_DATABASE_NAME}
-      DATABASE_USERNAME: ${FUSIONAUTH_DATABASE_USER}
-      DATABASE_PASSWORD: ${FUSIONAUTH_DATABASE_PASSWORD}
-      DATABASE_ROOT_USERNAME: ${API_DATABASE_USER}
-      DATABASE_ROOT_PASSWORD: ${API_DATABASE_PASSWORD}
-      FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
-      # SEARCH_SERVERS: ${SEARCH_SERVERS}
-      SEARCH_TYPE: ${SEARCH_TYPE}
-      FUSIONAUTH_APP_RUNTIME_MODE: ${FUSIONAUTH_APP_RUNTIME_MODE}
-      FUSIONAUTH_APP_SILENT_MODE: ${FUSIONAUTH_APP_SILENT_MODE}
-      FUSIONAUTH_APP_URL: ${FUSIONAUTH_APP_URL}
-      FUSIONAUTH_APP_KICKSTART_FILE: ${FUSIONAUTH_APP_KICKSTART_FILE}
-    depends_on:
-      - ${API_DATABASE_CLIENT}
-      # - elasticsearch
-      - traefik
-    networks:
-      dockernet:
-        ipv4_address: 192.168.1.10
-      backend: {}
-    # ports:
-    # - 9011:${FUSIONAUTH_CONTAINER_PORT}
-    labels:
-      - 'traefik.enable=true'
-
-  ### LOGOWL ########################################
-  logowl:
-    image: jz222/logowl:${LOGOWL_VERSION}
-    environment:
-      SECRET: ${LOGOWL_SECRET}
-      PORT: ${LOGOWL_CONTAINER_PORT}
-      MONGO_URI: 'mongodb://${LOGOWL_DB_USER}:${LOGOWL_DB_PASSWORD}@mongo:27017/${LOGOWL_MONGO_DB_NAME}?retryWrites=false'
-      MONGO_DB_NAME: ${LOGOWL_MONGO_DB_NAME}
-      CLIENT_URL: ${LOGOWL_CLIENT_URL}
-      MONTHLY_REQUEST_LIMIT: ${LOGOWL_MONTHLY_REQUEST_LIMIT}
-      IS_SELFHOSTED: ${LOGOWL_IS_SELFHOSTED}
-      MAILGUN_PRIVATE_KEY: ${MAILGUN_PRIVATE_KEY}
-      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
-      MAILGUN_API_BASE: ${MAILGUN_API_BASE}
-    networks:
-      - backend
-      - dockernet
-    labels:
-      - 'traefik.enable=true'
-
-  ### FILEBEAT ########################################
-  filebeat-apps:
-    build:
-      context: ./filebeat
-      args:
-        - 'FILEBEAT_VERSION=${FILEBEAT_VERSION}'
-    env_file: ./filebeat/.env
-    volumes:
-      - './filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro'
-      - './logs:/usr/share/filebeat/logs'
-  filebeat-containers:
-    image: logzio/docker-collector-logs
-    # command: 'python3 docker-colletor-logs/filebeat-yml-script.py --matchContainerName='fusionauth''
-    env_file: ./filebeat/.env
-    volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - '/var/lib/docker/containers:/var/lib/docker/containers'
-
-  ### DRONE CI ########################################
-  drone:
-    image: drone/drone:${DRONE_VERSION}
-    restart: always
-    environment:
-      DRONE_DATABASE_DRIVER: ${DRONE_DATABASE_DRIVER}
-      DRONE_DATABASE_DATASOURCE: ${DRONE_DATABASE_DRIVER}://${DRONE_DATABASE_USER}:${DRONE_DATABASE_PASSWORD}@${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${DRONE_DATABASE_NAME}?sslmode=disable
-      DRONE_DATABASE_SECRET: ${DRONE_DATABASE_SECRET}
-      DRONE_GITHUB_CLIENT_ID: ${DRONE_GITHUB_CLIENT_ID}
-      DRONE_GITHUB_CLIENT_SECRET: ${DRONE_GITHUB_CLIENT_SECRET}
-      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
-      DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
-      DRONE_SERVER_PROTO: ${DRONE_SERVER_PROTO}
-      # DRONE_WEBHOOK_ENDPOINT: ${DRONE_WEBHOOK_ENDPOINT}
-      # DRONE_WEBHOOK_EVENTS: ${DRONE_WEBHOOK_EVENTS}
-      # DRONE_WEBHOOK_SECRET: ${DRONE_WEBHOOK_SECRET}
-    volumes:
-      - 'drone:/data'
-    networks:
-      dockernet:
-        ipv4_address: 192.168.1.5
-      backend: {}
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.drone.rule=Host(`drone.${DOMAIN_NAME})'
-      - 'traefik.http.routers.drone.entrypoints=websecure'
-      - 'traefik.http.routers.drone.tls=true'
-      - 'traefik.http.routers.drone.tls.certresolver=letsEncryptDnsCustom'
-      - 'traefik.http.services.drone.loadbalancer.server.port=80'
-
-  ### DRONE RUNNER ########################################
-  drone-runner:
-    image: drone/drone-runner-digitalocean
-    restart: always
-    environment:
-      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
-      DRONE_RPC_HOST: ${DRONE_RPC_HOST}
-      DRONE_SERVER_PROTO: ${DRONE_SERVER_PROTO}
-      DRONE_PUBLIC_KEY_FILE: ${DRONE_PUBLIC_KEY_FILE}
-      DRONE_PRIVATE_KEY_FILE: ${DRONE_PRIVATE_KEY_FILE}
-    volumes:
-      - '/home/${USER}/.ssh/drone_runner:${DRONE_PRIVATE_KEY_FILE}'
-      - '/home/${USER}/.ssh/drone_runner.pub:${DRONE_PUBLIC_KEY_FILE}'
-    networks:
-      - dockernet
 
   ### OATHKEEPER ########################################
   oathkeeper:
@@ -324,3 +215,37 @@ services:
       - dockernet
     labels:
       - 'traefik.enable=false'
+
+  ### FUSIONAUTH ########################################
+  fusionauth:
+    image: 'fusionauth/fusionauth-app:${FUSIONAUTH_VERSION}'
+    restart: unless-stopped
+    volumes:
+      - fusionauth:/usr/local/fusionauth/config
+      - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
+    env_file: ./fusionauth/.env
+    environment:
+      DATABASE_URL: ${FUSIONAUTH_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${FUSIONAUTH_DATABASE_NAME}
+      DATABASE_USERNAME: ${FUSIONAUTH_DATABASE_USER}
+      DATABASE_PASSWORD: ${FUSIONAUTH_DATABASE_PASSWORD}
+      DATABASE_ROOT_USERNAME: ${API_DATABASE_USER}
+      DATABASE_ROOT_PASSWORD: ${API_DATABASE_PASSWORD}
+      FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
+      # SEARCH_SERVERS: ${SEARCH_SERVERS}
+      SEARCH_TYPE: ${SEARCH_TYPE}
+      FUSIONAUTH_APP_RUNTIME_MODE: ${FUSIONAUTH_APP_RUNTIME_MODE}
+      FUSIONAUTH_APP_SILENT_MODE: ${FUSIONAUTH_APP_SILENT_MODE}
+      FUSIONAUTH_APP_URL: ${FUSIONAUTH_APP_URL}
+      FUSIONAUTH_APP_KICKSTART_FILE: ${FUSIONAUTH_APP_KICKSTART_FILE}
+    depends_on:
+      - ${API_DATABASE_CLIENT}
+      # - elasticsearch
+      - traefik
+    networks:
+      dockernet:
+        ipv4_address: 192.168.1.10
+      backend: {}
+    # ports:
+    # - 9011:${FUSIONAUTH_CONTAINER_PORT}
+    labels:
+      - 'traefik.enable=true'

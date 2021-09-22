@@ -139,7 +139,7 @@ services:
         - 'ELK_VERSION=${ELK_VERSION}'
     restart: unless-stopped
     volumes:
-      - 'elasticsearch:/usr/share/elasticsearch/data'
+      - '${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data'
     environment:
       - cluster.name=fusionauth
       - node.name=fusionauth-node
