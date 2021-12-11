@@ -1,0 +1,17 @@
+# ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
+tcp:
+  routers:
+    serviceName:
+      rule: HostSNI(`*`)
+      entryPoints:
+        - db
+      tls: {}
+      # tls:
+      # certResolver: cloudflareDns
+      service: serviceName
+
+  services:
+    serviceName:
+      loadBalancer:
+        servers:
+          - url: http://192.168.1.1:{{PORT_NUMBER_OF_SERVICE}}

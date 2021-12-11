@@ -8,6 +8,8 @@ entryPoints:
     address: ":443"
   metrics:
     address: ":8082"
+  # postgres:
+  #   address: ":5432"
 
 api:
   dashboard: true

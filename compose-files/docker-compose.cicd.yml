@@ -9,8 +9,8 @@ networks:
     external: true
 
 volumes:
-  drone:
-    driver: '${VOLUMES_DRIVER}'
+  # drone:
+  #   driver: '${VOLUMES_DRIVER}'
 
 services:
   ### DRONE CI ########################################

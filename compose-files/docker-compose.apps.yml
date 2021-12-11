@@ -8,11 +8,11 @@ networks:
   backdocker:
     external: true
 
-volumes:
-  webhook:
-    driver: '${VOLUMES_DRIVER}'
-  fusionauth:
-    driver: '${VOLUMES_DRIVER}'
+# volumes:
+#   webhook:
+#     driver: '${VOLUMES_DRIVER}'
+#   fusionauth:
+# driver: '${VOLUMES_DRIVER}'
 
 services:
   # WHOAMI ################################################
@@ -221,7 +221,7 @@ services:
     image: 'fusionauth/fusionauth-app:${FUSIONAUTH_VERSION}'
     restart: unless-stopped
     volumes:
-      - fusionauth:/usr/local/fusionauth/config
+      - ${DATA_PATH_HOST}/fusionauth:/usr/local/fusionauth/config
       - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
     env_file: ./fusionauth/.env
     environment:
