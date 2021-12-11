@@ -1,0 +1,251 @@
+# @format
+
+version: '3.9'
+
+networks:
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+# volumes:
+#   webhook:
+#     driver: '${VOLUMES_DRIVER}'
+#   fusionauth:
+# driver: '${VOLUMES_DRIVER}'
+
+services:
+  # WHOAMI ################################################
+  whoami:
+    image: emilevauge/whoami
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
+  ## Application ################################################
+  frontend:
+    restart: always
+    build:
+      context: ../frontend/
+    volumes:
+      - ${APP_CODE_PATH_CONTAINER}/app/node_modules
+      - ${APP_CODE_PATH_HOST}/app:${APP_CODE_PATH_CONTAINER}/app
+    env_file: ../frontend/.env
+    depends_on:
+      - traefik
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
+  # EXPLORER ################################################
+  explorer:
+    image: stctheproducer/explorer
+    expose:
+      - 4859
+    networks:
+      - dockernet
+    volumes:
+      - './explorer/examples:/opt/explorer'
+    labels:
+      - 'traefik.enable=true'
+
+  ## STRAPI ################################################
+  strapi:
+    depends_on:
+      - '${API_DATABASE_CLIENT}'
+    image: strapi/strapi
+    restart: unless-stopped
+    networks:
+      - dockernet
+      - backend
+    environment:
+      - 'DATABASE_CLIENT=${API_DATABASE_CLIENT}'
+      - 'DATABASE_NAME=${API_DATABASE_NAME}'
+      - 'DATABASE_HOST=${API_DATABASE_HOST}'
+      - 'DATABASE_PORT=${API_DATABASE_PORT}'
+      - 'DATABASE_USERNAME=${API_DATABASE_USER}'
+      - 'DATABASE_PASSWORD=${API_DATABASE_PASSWORD}'
+    volumes:
+      - '${DATA_PATH_HOST}/strapi:/srv/app'
+    labels:
+      - 'traefik.enable=true'
+
+  ### Webhook ################################################
+  webhook:
+    build:
+      context: ./webhook
+      args:
+        - 'WEBHOOK_VERSION=${WEBHOOK_VERSION}'
+    restart: unless-stopped
+    environment:
+      DRONE_WEBHOOK_SECRET: ${DRONE_WEBHOOK_SECRET}
+      DRONE_SERVER_HOST: ${DRONE_SERVER_HOST}
+      SSH_AUTH_SOCK: /ssh-agent
+    volumes:
+      - '${WEBHOOK_HOOKS_DIR}:/etc/webhook'
+      - '${WEBHOOK_SCRIPTS_DIR}:/opt/scripts'
+      - '${APP_PROJECTS}:/opt/deploy'
+      - '${SSH_AUTH_SOCK}:/ssh-agent'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './logs/apps/webhook.log:/root/logs/webhook.log'
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
+  ### OATHKEEPER ########################################
+  oathkeeper:
+    image: oryd/oathkeeper:${OATHKEEPER_VERSION}
+    command: serve --config=/etc/oathkeeper/config.yaml
+    restart: unless-stopped
+    expose:
+      - 4455
+      - 4456
+    networks:
+      - dockernet
+    volumes:
+      - './ory/oathkeeper/files:/etc/oathkeeper'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.oathkeeper-proxy.rule=Host(`${OATHKEEPER_PROXY_SUBDOMAIN}.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.oathkeeper-proxy.entrypoints=websecure'
+      - 'traefik.http.routers.oathkeeper-proxy.tls=true'
+      - 'traefik.http.routers.oathkeeper-proxy.service=oathkeeper-proxy'
+      - 'traefik.http.services.oathkeeper-proxy.loadbalancer.server.port=${OATHKEEPER_PROXY_PORT}'
+      # -
+      - 'traefik.http.routers.oathkeeper-api.rule=Host(`${OATHKEEPER_API_SUBDOMAIN}.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.oathkeeper-api.entrypoints=websecure'
+      - 'traefik.http.routers.oathkeeper-api.tls=true'
+      - 'traefik.http.routers.oathkeeper-api.service=oathkeeper-api'
+      - 'traefik.http.services.oathkeeper-api.loadbalancer.server.port=${OATHKEEPER_API_PORT}'
+
+  ### KETO ########################################
+  keto-migrate:
+    image: oryd/keto:${KETO_VERSION}
+    command: migrate sql -e
+    restart: on-failure
+    environment:
+      LOG_LEVEL: debug
+      DSN: ${KETO_DSN}
+    networks:
+      - backdocker
+    labels:
+      - 'traefik.enable=false'
+
+  keto:
+    image: oryd/keto:${KETO_VERSION}
+    depends_on:
+      - keto-migrate
+    command: serve --config=/etc/keto/config.yaml
+    restart: unless-stopped
+    environment:
+      DSN: ${KETO_DSN}
+    expose:
+      - 4466
+    networks:
+      - dockernet
+      - backdocker
+    volumes:
+      - './ory/keto/files:/etc/keto'
+    labels:
+      - 'traefik.enable=true'
+
+  ### KRATOS ########################################
+  kratos-migrate:
+    image: oryd/kratos:${KRATOS_VERSION}
+    command: migrate sql -e --config=/etc/config/kratos/.kratos.yml -y
+    restart: on-failure
+    environment:
+      LOG_LEVEL: debug
+      DSN: ${KRATOS_DSN}
+    networks:
+      - backdocker
+    volumes:
+      - './ory/kratos/files:/etc/config/kratos'
+    labels:
+      - 'traefik.enable=false'
+
+  kratos:
+    image: oryd/kratos:${KRATOS_VERSION}
+    depends_on:
+      - kratos-migrate
+    command: serve --config=/etc/config/kratos/.kratos.yml --dev
+    restart: unless-stopped
+    environment:
+      LOG_LEVEL: trace
+      DSN: ${KRATOS_DSN}
+    expose:
+      - 4433
+      - 4434
+    networks:
+      - dockernet
+      - backdocker
+    volumes:
+      - './ory/kratos/files:/etc/config/kratos'
+      - './ory/kratos/email-templates:/etc/config/courier-templates'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.kratos-public.rule=Host(`${KRATOS_PUBLIC_SUBDOMAIN}.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.kratos-public.entrypoints=websecure'
+      - 'traefik.http.routers.kratos-public.tls=true'
+      - 'traefik.http.routers.kratos-public.service=kratos-public'
+      - 'traefik.http.services.kratos-public.loadbalancer.server.port=${KRATOS_PUBLIC_PORT}'
+      # -
+      - 'traefik.http.routers.kratos-admin.rule=Host(`${KRATOS_ADMIN_SUBDOMAIN}.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.kratos-admin.entrypoints=websecure'
+      - 'traefik.http.routers.kratos-admin.tls=true'
+      - 'traefik.http.routers.kratos-admin.service=kratos-admin'
+      - 'traefik.http.services.kratos-admin.loadbalancer.server.port=${KRATOS_ADMIN_PORT}'
+
+  ### MAILSLURPER ########################################
+  kratos-mail:
+    image: oryd/mailslurper:latest-smtps
+    # command: mailslurper -loglevel debug -logformat simple
+    expose:
+      - 4436
+      - 4437
+      - 1025
+    ports:
+      - '4436:4436'
+      - '4437:4437'
+      - '1025:1025'
+    networks:
+      - dockernet
+    labels:
+      - 'traefik.enable=false'
+
+  ### FUSIONAUTH ########################################
+  fusionauth:
+    image: 'fusionauth/fusionauth-app:${FUSIONAUTH_VERSION}'
+    restart: unless-stopped
+    volumes:
+      - ${DATA_PATH_HOST}/fusionauth:/usr/local/fusionauth/config
+      - ./fusionauth/kickstart:/usr/local/fusionauth/kickstart
+    env_file: ./fusionauth/.env
+    environment:
+      DATABASE_URL: ${FUSIONAUTH_DATABASE_URL}://${API_DATABASE_CLIENT}:${API_DATABASE_PORT}/${FUSIONAUTH_DATABASE_NAME}
+      DATABASE_USERNAME: ${FUSIONAUTH_DATABASE_USER}
+      DATABASE_PASSWORD: ${FUSIONAUTH_DATABASE_PASSWORD}
+      DATABASE_ROOT_USERNAME: ${API_DATABASE_USER}
+      DATABASE_ROOT_PASSWORD: ${API_DATABASE_PASSWORD}
+      FUSIONAUTH_APP_MEMORY: ${FUSIONAUTH_APP_MEMORY}
+      # SEARCH_SERVERS: ${SEARCH_SERVERS}
+      SEARCH_TYPE: ${SEARCH_TYPE}
+      FUSIONAUTH_APP_RUNTIME_MODE: ${FUSIONAUTH_APP_RUNTIME_MODE}
+      FUSIONAUTH_APP_SILENT_MODE: ${FUSIONAUTH_APP_SILENT_MODE}
+      FUSIONAUTH_APP_URL: ${FUSIONAUTH_APP_URL}
+      FUSIONAUTH_APP_KICKSTART_FILE: ${FUSIONAUTH_APP_KICKSTART_FILE}
+    depends_on:
+      - ${API_DATABASE_CLIENT}
+      # - elasticsearch
+      - traefik
+    networks:
+      dockernet:
+        ipv4_address: 192.168.1.10
+      backend: {}
+    # ports:
+    # - 9011:${FUSIONAUTH_CONTAINER_PORT}
+    labels:
+      - 'traefik.enable=true'

@@ -1,0 +1,272 @@
+# @format
+
+version: '3.9'
+
+networks:
+  backend:
+    driver: '${NETWORKS_DRIVER}'
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+# volumes:
+#   mysql:
+#     driver: '${VOLUMES_DRIVER}'
+#   mariadb:
+#     driver: '${VOLUMES_DRIVER}'
+#   postgres:
+#     driver: '${VOLUMES_DRIVER}'
+#   mongo:
+#     driver: '${VOLUMES_DRIVER}'
+#   redis:
+#     driver: '${VOLUMES_DRIVER}'
+#   elasticsearch:
+#     driver: '${VOLUMES_DRIVER}'
+
+services:
+  ### MySQL ################################################
+  mysql:
+    build:
+      context: ./mysql
+      args:
+        - 'MYSQL_VERSION=${MYSQL_VERSION}'
+    restart: unless-stopped
+    command: '--default-authentication-plugin=mysql_native_password'
+    environment:
+      - 'MYSQL_DATABASE=${DB_CONFIG_DATABASE_NAME}'
+      - 'MYSQL_USER=${DB_CONFIG_DATABASE_USER}'
+      - 'MYSQL_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
+      - 'MYSQL_ROOT_PASSWORD=${DB_CONFIG_DATABASE_ROOT_PASSWORD}'
+      - 'TZ=${WORKSPACE_TIMEZONE}'
+    volumes:
+      - '${DATA_PATH_HOST}/mysql:/var/lib/mysql'
+      - '${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d'
+    networks:
+      backend: {}
+      backdocker:
+        ipv4_address: 192.168.90.20
+
+  ### MariaDB ##############################################
+  mariadb:
+    build:
+      context: ./mariadb
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - 'MARIADB_VERSION=${MARIADB_VERSION}'
+    volumes:
+      - '${DATA_PATH_HOST}/mariadb:/var/lib/mysql'
+      - '${MARIADB_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d'
+    command: '--default-authentication-plugin=mysql_native_password'
+    environment:
+      - 'TZ=${WORKSPACE_TIMEZONE}'
+      - 'MYSQL_DATABASE=${DB_CONFIG_DATABASE_NAME}'
+      - 'MYSQL_USER=${DB_CONFIG_DATABASE_USER}'
+      - 'MYSQL_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
+      - 'MYSQL_ROOT_PASSWORD=${DB_CONFIG_DATABASE_ROOT_PASSWORD}'
+    networks:
+      backend: {}
+      backdocker:
+        ipv4_address: 192.168.90.30
+
+  ### PostgreSQL ###########################################
+  postgres:
+    restart: unless-stopped
+    build:
+      context: ./postgres
+      args:
+        - 'POSTGRES_VERSION=${POSTGRES_VERSION}'
+    volumes:
+      - '${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data'
+      - '${POSTGRES_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d'
+    # ports:
+    #   - '${POSTGRES_PORT}:5432'
+    environment:
+      - 'POSTGRES_DB=${DB_CONFIG_DATABASE_NAME}'
+      - 'POSTGRES_USER=${DB_CONFIG_DATABASE_USER}'
+      - 'POSTGRES_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
+    networks:
+      backend: {}
+      # dockernet: {}
+      backdocker:
+        ipv4_address: 192.168.90.40
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.tcp.routers.postgres.rule=HostSNI(`*`)'
+      - 'traefik.tcp.routers.postgres.entrypoints=postgres'
+      - 'traefik.tcp.routers.postgres.service=postgres'
+      - 'traefik.tcp.services.postgres.loadbalancer.server.port=${POSTGRES_PORT}'
+
+  ### MongoDB ##############################################
+  mongo:
+    build:
+      context: ./mongo
+      args:
+        - 'MONGO_VERSION=${MONGO_VERSION}'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_CONFIG_DATABASE_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_CONFIG_DATABASE_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_CONFIG_DATABASE_NAME}
+    volumes:
+      - '${DATA_PATH_HOST}/mongo:/data/db'
+      - './mongo/mongod.conf:/etc/mongod.conf'
+    networks:
+      backend: {}
+      backdocker:
+        ipv4_address: 192.168.90.50
+
+  ### Redis ################################################
+  redis:
+    restart: unless-stopped
+    build: ./redis
+    volumes:
+      - '${DATA_PATH_HOST}/redis:/data'
+    # ports:
+    # - '${REDIS_PORT}:6379'
+    networks:
+      backend: {}
+      backdocker:
+        ipv4_address: 192.168.90.60
+
+  ### Redis Cluster ##########################################
+  redis-cluster:
+    build: ./redis-cluster
+    ports:
+      - '${REDIS_CLUSTER_PORT_RANGE}:7000-7005'
+    networks:
+      - backend
+
+  ### ELASTICSEARCH ########################################
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      args:
+        - 'ELK_VERSION=${ELK_VERSION}'
+    restart: unless-stopped
+    volumes:
+      - '${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data'
+    environment:
+      - cluster.name=fusionauth
+      - node.name=fusionauth-node
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=${ELASTICSEARCH_JAVA_OPTS}'
+      - cluster.initial_master_nodes=fusionauth-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # Un-comment to access the search service directly
+    # ports:
+    # - ${ELASTICSEARCH_HOST_HTTP_PORT}:9200
+    # - ${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300
+    networks:
+      backend: {}
+      backdocker:
+        ipv4_address: 192.168.90.70
+    labels:
+      - 'traefik.enable=true'
+
+  ############ DATABASE UIs ##################################
+  ### REDISWEBUI #############################################
+  redis-webui:
+    build:
+      context: ./redis-webui
+    environment:
+      - 'ADMIN_USER=${REDIS_WEBUI_USERNAME}'
+      - 'ADMIN_PASS=${REDIS_WEBUI_PASSWORD}'
+      - 'REDIS_1_HOST=${REDIS_WEBUI_CONNECT_HOST}'
+      - 'REDIS_1_PORT=${REDIS_WEBUI_CONNECT_PORT}'
+    networks:
+      - dockernet
+      - backend
+    depends_on:
+      - redis
+    labels:
+      - 'traefik.enable=true'
+
+  ### MongoWebUI #############################################
+  mongo-webui:
+    image: mongoclient/mongoclient
+    environment:
+      - 'ROOT_URL=${MONGO_WEBUI_ROOT_URL}'
+      - 'MONGO_URL=${MONGO_WEBUI_MONGO_URL}'
+      - 'INSTALL_MONGO=${MONGO_WEBUI_INSTALL_MONGO}'
+    volumes:
+      - '${DATA_PATH_HOST}/mongo-webui:/data/db'
+    # ports:
+    # - ''${MONGO_WEBUI_PORT}:3000''
+    networks:
+      - dockernet
+      - backend
+    depends_on:
+      - mongo
+    labels:
+      - 'traefik.enable=true'
+
+  ### Mongo Express ##########################################
+  mongo-express:
+    depends_on:
+      - mongo
+    image: mongo-express
+    networks:
+      - dockernet
+      - backend
+    environment:
+      ME_CONFIG_MONGODB_SERVER: '${ME_CONFIG_MONGODB_SERVER}'
+      ME_CONFIG_MONGODB_ADMINUSERNAME: '${DB_CONFIG_DATABASE_USER}'
+      ME_CONFIG_MONGODB_ADMINPASSWORD: '${DB_CONFIG_DATABASE_PASSWORD}'
+      ME_CONFIG_BASICAUTH_USERNAME: '${ME_CONFIG_BASICAUTH_USERNAME}'
+      ME_CONFIG_BASICAUTH_PASSWORD: '${ME_CONFIG_BASICAUTH_PASSWORD}'
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: '${ME_CONFIG_MONGODB_ENABLE_ADMIN}'
+      ME_CONFIG_MONGODB_AUTH_DATABASE: '${DB_CONFIG_DATABASE_AUTHENTICATION_DATABASE}'
+      ME_CONFIG_MONGODB_AUTH_USERNAME: '${DB_CONFIG_DATABASE_USER}'
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: '${DB_CONFIG_DATABASE_PASSWORD}'
+    labels:
+      - 'traefik.enable=true'
+
+  ### Adminer ################################################
+  adminer:
+    depends_on:
+      - '${DB_CONFIG_DATABASE_HOST}'
+    image: adminer:latest
+    restart: unless-stopped
+    environment:
+      - 'ADMINER_DESIGN=${ADMINER_DESIGN}'
+    networks:
+      - dockernet
+      - backend
+    labels:
+      - 'traefik.enable=true'
+
+  ### phpMyAdmin #############################################
+  phpmyadmin:
+    depends_on:
+      - ${DB_CONFIG_DATABASE_HOST}
+    image: phpmyadmin/phpmyadmin:latest
+    # ports:
+    # - '8081:80'
+    networks:
+      - dockernet
+      - backend
+    labels:
+      - 'traefik.enable=true'
+
+  ### pgAdmin ################################################
+  pgadmin:
+    depends_on:
+      - ${DB_CONFIG_DATABASE_HOST}
+    image: dpage/pgadmin4:latest
+    environment:
+      - 'PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}'
+      - 'PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}'
+      - 'PGADMIN_LISTEN_ADDRESS=${PGADMIN_LISTEN_ADDRESS}'
+      - 'PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}'
+    # ports:
+    # - '80:80'
+    networks:
+      - dockernet
+      - backend
+    labels:
+      - 'traefik.enable=true'

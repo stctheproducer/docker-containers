@@ -1,0 +1,101 @@
+version: v0.5.5-alpha.1
+
+dsn: "postgres://kratos:secret@postgres:5432/kratos?sslmode=disable&max_conns=20&max_idle_conns=4"
+
+serve:
+  public:
+    host: 0.0.0.0
+    port: 4433
+    # base_url: http://127.0.0.1:4433
+    base_url: https://kratos.dev.test/
+    cors:
+      enabled: true
+      allowed_origins:
+        - https://dev.test
+        - https://*.dev.test
+      allowed_methods:
+        - POST
+        - GET
+        - PUT
+        - PATCH
+        - DELETE
+      allowed_headers:
+        - Authorization
+        - Cookie
+      exposed_headers:
+        - Content-Type
+        - Set-Cookie
+  admin:
+    host: 0.0.0.0
+    port: 4434
+    # base_url: http://127.0.0.1:4434
+    base_url: http://admin.kratos.dev.test/
+
+selfservice:
+  default_browser_return_url: https://auth.dev.test/
+  whitelisted_return_urls:
+    - https://auth.dev.test
+
+  methods:
+    password:
+      enabled: true
+
+  flows:
+    error:
+      ui_url: https://auth.dev.test/error
+
+    settings:
+      ui_url: https://auth.dev.test/settings
+      privileged_session_max_age: 15m
+
+    recovery:
+      enabled: true
+      ui_url: https://auth.dev.test/recovery
+
+    verification:
+      enabled: true
+      ui_url: https://auth.dev.test/verify
+      after:
+        default_browser_return_url: https://auth.dev.test/verify
+
+    logout:
+      after:
+        default_browser_return_url: https://auth.dev.test/auth/login
+
+    login:
+      ui_url: https://auth.dev.test/auth/login
+      lifespan: 10m
+
+    registration:
+      lifespan: 10m
+      ui_url: https://auth.dev.test/auth/registration
+      after:
+        password:
+          hooks:
+            - hook: session
+
+log:
+  level: trace
+  format: json
+  leak_sensitive_values: true
+
+secrets:
+  cookie:
+    - NLuw2mWD2x41xH4EmxZo5mgRz6dtzMMoqfHAcne9ukA
+
+hashers:
+  argon2:
+    iterations: 2
+    parallelism: 1
+    salt_length: 16
+    key_length: 16
+    memory: 131072
+
+identity:
+  default_schema_url: file:///etc/config/kratos/identity.schema.json
+
+courier:
+  smtp:
+    connection_uri: smtps://test:test@kratos-mail:1025/?skip_ssl_verify=true
+    from_address: kratos@dev.test
+  # template_override_path: /etc/courier-templates

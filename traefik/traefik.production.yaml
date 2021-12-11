@@ -2,6 +2,8 @@ global:
   checkNewVersion: true
 
 entryPoints:
+  # postgres:
+  #   address: ":5432"
   web:
     address: ":80"
   websecure:

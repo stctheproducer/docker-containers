@@ -1,0 +1,48 @@
+# @format
+
+version: '3.9'
+
+networks:
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+services:
+  ### LOGOWL ########################################
+  logowl:
+    image: jz222/logowl:${LOGOWL_VERSION}
+    environment:
+      SECRET: ${LOGOWL_SECRET}
+      PORT: ${LOGOWL_CONTAINER_PORT}
+      MONGO_URI: 'mongodb://${LOGOWL_DB_USER}:${LOGOWL_DB_PASSWORD}@mongo:27017/${LOGOWL_MONGO_DB_NAME}?retryWrites=false'
+      MONGO_DB_NAME: ${LOGOWL_MONGO_DB_NAME}
+      CLIENT_URL: ${LOGOWL_CLIENT_URL}
+      MONTHLY_REQUEST_LIMIT: ${LOGOWL_MONTHLY_REQUEST_LIMIT}
+      IS_SELFHOSTED: ${LOGOWL_IS_SELFHOSTED}
+      MAILGUN_PRIVATE_KEY: ${MAILGUN_PRIVATE_KEY}
+      MAILGUN_DOMAIN: ${MAILGUN_DOMAIN}
+      MAILGUN_API_BASE: ${MAILGUN_API_BASE}
+    networks:
+      - backend
+      - dockernet
+    labels:
+      - 'traefik.enable=true'
+
+  ### FILEBEAT ########################################
+  filebeat-apps:
+    build:
+      context: ./filebeat
+      args:
+        - 'FILEBEAT_VERSION=${FILEBEAT_VERSION}'
+    env_file: ./filebeat/.env
+    volumes:
+      - './filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro'
+      - './logs:/usr/share/filebeat/logs'
+  filebeat-containers:
+    image: logzio/docker-collector-logs
+    # command: 'python3 docker-colletor-logs/filebeat-yml-script.py --matchContainerName='fusionauth''
+    env_file: ./filebeat/.env
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/var/lib/docker/containers:/var/lib/docker/containers'

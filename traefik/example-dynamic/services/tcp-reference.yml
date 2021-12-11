@@ -1,0 +1,68 @@
+tcp:
+  routers:
+    TCPRouter0:
+      entryPoints:
+        - foobar
+        - foobar
+      middlewares:
+        - foobar
+        - foobar
+      service: foobar
+      rule: foobar
+      tls:
+        passthrough: true
+        options: foobar
+        certResolver: foobar
+        domains:
+          - main: foobar
+            sans:
+              - foobar
+              - foobar
+          - main: foobar
+            sans:
+              - foobar
+              - foobar
+    TCPRouter1:
+      entryPoints:
+        - foobar
+        - foobar
+      middlewares:
+        - foobar
+        - foobar
+      service: foobar
+      rule: foobar
+      tls:
+        passthrough: true
+        options: foobar
+        certResolver: foobar
+        domains:
+          - main: foobar
+            sans:
+              - foobar
+              - foobar
+          - main: foobar
+            sans:
+              - foobar
+              - foobar
+  middlewares:
+    Middleware00:
+      ipWhiteList:
+        sourceRange:
+          - foobar
+          - foobar
+  services:
+    TCPService01:
+      loadBalancer:
+        terminationDelay: 42
+        proxyProtocol:
+          version: 42
+        servers:
+          - address: foobar
+          - address: foobar
+    TCPService02:
+      weighted:
+        services:
+          - name: foobar
+            weight: 42
+          - name: foobar
+            weight: 42

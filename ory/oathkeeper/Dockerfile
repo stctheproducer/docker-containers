@@ -1,0 +1,3 @@
+ARG OATHKEEPER_VERSION=v0.38.9-beta.1
+
+FROM oryd/oathkeeper:${OATHKEEPER_VERSION}

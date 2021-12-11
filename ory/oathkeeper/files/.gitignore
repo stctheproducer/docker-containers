@@ -1,0 +1,5 @@
+rules.yaml
+rules.json
+# oathkeeper credentials generate --alg RS256 > jwks.json
+# $ docker run oryd/oathkeeper:v0.38.9-beta.1 credentials generate --alg RS256 > jwks.json
+jwks.json
