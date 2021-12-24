@@ -12,10 +12,6 @@ networks:
   backdocker:
     external: true
 
-# volumes:
-#   portainer:
-#     driver: '${VOLUMES_DRIVER}'
-
 services:
   ### TRAEFIK #########################################
   socket-proxy:
@@ -52,6 +48,10 @@ services:
       - socket-proxy
     labels:
       - 'traefik.enable=true'
+    secrets:
+      - cloudflare_email 
+      - cloudflare_api_key
+      - cloudflare_dns_api_token
 
   ### PORTAINER ########################################
   portainer-proxy:
@@ -78,6 +78,7 @@ services:
       TASKS: 1
       VOLUMES: 1
       POST: 1
+      SECRETS: 1
     networks:
       - portainer-proxy
 
@@ -100,3 +101,16 @@ services:
       - 'traefik.http.routers.portainer.entrypoints=websecure'
       - 'traefik.http.routers.portainer.tls=true'
       - 'traefik.http.services.portainer.loadbalancer.server.port=${PORTAINER_UI_PORT}'
+    secrets:
+      - portainer_admin_password
+
+# SECRETS ################################################
+secrets:
+  portainer_admin_password:
+    file: $SECRETSDIR/portainer_admin_password
+  cloudflare_email:
+    file: $SECRETSDIR/cloudflare_email
+  cloudflare_api_key:
+    file: $SECRETSDIR/cloudflare_api_key
+  cloudflare_dns_api_token:
+    file: $SECRETSDIR/cloudflare_dns_api_token

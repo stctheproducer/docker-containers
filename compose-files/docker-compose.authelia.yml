@@ -1,0 +1,57 @@
+version: '3.9'
+
+networks:
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+services:
+  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+  authelia:
+    container_name: authelia
+    # image: authelia/authelia:latest
+    image: authelia/authelia:4.21.0
+    restart: always
+    networks:
+      - dockernet
+      - backdocker
+    depends_on:
+      - mariadb
+      - redis
+    volumes:
+      - './authelia/config:/config'
+    env_file:
+      - ./authelia/.env
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_storage_mysql_password
+      - authelia_notifier_smtp_password
+      - authelia_duo_api_secret_key
+    labels:
+      - 'traefik.enable=true'
+      ## HTTP Routers
+      - 'traefik.http.routers.authelia.entrypoints=websecure'
+      - 'traefik.http.routers.authelia.rule=HostHeader(`authelia.${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.authelia.tls=true'
+      - 'traefik.http.routers.authelia.tls.certresolver=cloudflareDns'
+      ## Middlewares
+      - 'traefik.http.routers.authelia.middlewares=chain-authelia@file'
+      ## HTTP Services
+      - 'traefik.http.routers.authelia.service=authelia'
+      - 'traefik.http.services.authelia.loadbalancer.server.port=9091'
+
+secrets:
+  authelia_jwt_secret:
+    file: $SECRETSDIR/authelia_jwt_secret
+  authelia_session_secret:
+    file: $SECRETSDIR/authelia_session_secret
+  authelia_storage_mysql_password:
+    file: $SECRETSDIR/authelia_storage_mysql_password
+  authelia_notifier_smtp_password:
+    file: $SECRETSDIR/authelia_notifier_smtp_password
+  authelia_duo_api_secret_key:
+    file: $SECRETSDIR/authelia_duo_api_secret_key
+  # authelia_session_redis_password:
+  #   file: $SECRETSDIR/authelia_session_redis_password

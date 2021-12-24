@@ -1,0 +1,10 @@
+users:
+  username:
+    displayname: "John Doe"
+    # Password hashing
+    # docker run authelia/authelia:latest authelia hash-password YOUR_PASSWORD
+    password: "HASHED_PASSWORD"
+    email: myemail@domain.com
+    groups:
+      - admins
+      - dev

@@ -36,9 +36,12 @@ services:
     environment:
       - 'MYSQL_DATABASE=${DB_CONFIG_DATABASE_NAME}'
       - 'MYSQL_USER=${DB_CONFIG_DATABASE_USER}'
-      - 'MYSQL_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
-      - 'MYSQL_ROOT_PASSWORD=${DB_CONFIG_DATABASE_ROOT_PASSWORD}'
+      - 'MYSQL_PASSWORD_FILE=${DB_CONFIG_DATABASE_PASSWORD_FILE}'
+      - 'MYSQL_ROOT_PASSWORD_FILE=${DB_CONFIG_DATABASE_ROOT_PASSWORD_FILE}'
       - 'TZ=${WORKSPACE_TIMEZONE}'
+    secrets:
+      - database_password
+      - database_root_password
     volumes:
       - '${DATA_PATH_HOST}/mysql:/var/lib/mysql'
       - '${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d'
@@ -64,8 +67,11 @@ services:
       - 'TZ=${WORKSPACE_TIMEZONE}'
       - 'MYSQL_DATABASE=${DB_CONFIG_DATABASE_NAME}'
       - 'MYSQL_USER=${DB_CONFIG_DATABASE_USER}'
-      - 'MYSQL_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
-      - 'MYSQL_ROOT_PASSWORD=${DB_CONFIG_DATABASE_ROOT_PASSWORD}'
+      - 'MYSQL_PASSWORD_FILE=${DB_CONFIG_DATABASE_PASSWORD_FILE}'
+      - 'MYSQL_ROOT_PASSWORD_FILE=${DB_CONFIG_DATABASE_ROOT_PASSWORD_FILE}'
+    secrets:
+      - database_password
+      - database_root_password
     networks:
       backend: {}
       backdocker:
@@ -86,7 +92,9 @@ services:
     environment:
       - 'POSTGRES_DB=${DB_CONFIG_DATABASE_NAME}'
       - 'POSTGRES_USER=${DB_CONFIG_DATABASE_USER}'
-      - 'POSTGRES_PASSWORD=${DB_CONFIG_DATABASE_PASSWORD}'
+      - 'POSTGRES_PASSWORD_FILE=${DB_CONFIG_DATABASE_PASSWORD_FILE}'
+    secrets:
+      - database_password
     networks:
       backend: {}
       # dockernet: {}
@@ -107,8 +115,10 @@ services:
         - 'MONGO_VERSION=${MONGO_VERSION}'
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_CONFIG_DATABASE_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_CONFIG_DATABASE_PASSWORD}
+      MONGO_INITDB_ROOT_PASSWORD_FILE: ${DB_CONFIG_DATABASE_PASSWORD_FILE}
       MONGO_INITDB_DATABASE: ${DB_CONFIG_DATABASE_NAME}
+    secrets:
+      - database_password
     volumes:
       - '${DATA_PATH_HOST}/mongo:/data/db'
       - './mongo/mongod.conf:/etc/mongod.conf'
@@ -175,9 +185,11 @@ services:
       context: ./redis-webui
     environment:
       - 'ADMIN_USER=${REDIS_WEBUI_USERNAME}'
-      - 'ADMIN_PASS=${REDIS_WEBUI_PASSWORD}'
+      - 'ADMIN_PASS_FILE=${REDIS_WEBUI_PASSWORD_FILE}'
       - 'REDIS_1_HOST=${REDIS_WEBUI_CONNECT_HOST}'
       - 'REDIS_1_PORT=${REDIS_WEBUI_CONNECT_PORT}'
+    secrets:
+      - redis_webui_password
     networks:
       - dockernet
       - backend
@@ -216,13 +228,16 @@ services:
     environment:
       ME_CONFIG_MONGODB_SERVER: '${ME_CONFIG_MONGODB_SERVER}'
       ME_CONFIG_MONGODB_ADMINUSERNAME: '${DB_CONFIG_DATABASE_USER}'
-      ME_CONFIG_MONGODB_ADMINPASSWORD: '${DB_CONFIG_DATABASE_PASSWORD}'
+      ME_CONFIG_MONGODB_ADMINPASSWORD_FILE: '${DB_CONFIG_DATABASE_PASSWORD_FILE}'
       ME_CONFIG_BASICAUTH_USERNAME: '${ME_CONFIG_BASICAUTH_USERNAME}'
-      ME_CONFIG_BASICAUTH_PASSWORD: '${ME_CONFIG_BASICAUTH_PASSWORD}'
+      ME_CONFIG_BASICAUTH_PASSWORD_FILE: '${ME_CONFIG_BASICAUTH_PASSWORD_FILE}'
       ME_CONFIG_MONGODB_ENABLE_ADMIN: '${ME_CONFIG_MONGODB_ENABLE_ADMIN}'
       ME_CONFIG_MONGODB_AUTH_DATABASE: '${DB_CONFIG_DATABASE_AUTHENTICATION_DATABASE}'
       ME_CONFIG_MONGODB_AUTH_USERNAME: '${DB_CONFIG_DATABASE_USER}'
-      ME_CONFIG_MONGODB_AUTH_PASSWORD: '${DB_CONFIG_DATABASE_PASSWORD}'
+      ME_CONFIG_MONGODB_AUTH_PASSWORD_FILE: '${DB_CONFIG_DATABASE_PASSWORD_FILE}'
+    secrets:
+      - database_password
+      - mongo_express_auth_password
     labels:
       - 'traefik.enable=true'
 
@@ -260,9 +275,11 @@ services:
     image: dpage/pgadmin4:latest
     environment:
       - 'PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}'
-      - 'PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}'
+      - 'PGADMIN_DEFAULT_PASSWORD_FILE=${PGADMIN_DEFAULT_PASSWORD_FILE}'
       - 'PGADMIN_LISTEN_ADDRESS=${PGADMIN_LISTEN_ADDRESS}'
       - 'PGADMIN_LISTEN_PORT=${PGADMIN_LISTEN_PORT}'
+    secrets:
+      - pgadmin_password
     # ports:
     # - '80:80'
     networks:
@@ -270,3 +287,16 @@ services:
       - backend
     labels:
       - 'traefik.enable=true'
+
+### Secrets ######################################
+secrets:
+  database_password:
+    file: $SECRETSDIR/database_password
+  database_root_password:
+    file: $SECRETSDIR/database_root_password
+  mongo_express_auth_password:
+    file: $SECRETSDIR/mongo_express_auth_password
+  pgadmin_password:
+    file: $SECRETSDIR/pgadmin_password
+  redis_webui_password:
+    file: $SECRETSDIR/redis_webui_password

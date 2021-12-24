@@ -2,7 +2,7 @@ global:
   checkNewVersion: true
 
 # pilot:
-#   token: 
+#   token:
 
 entryPoints:
   # postgres:
@@ -102,8 +102,7 @@ certificatesResolvers:
 
   cloudflareDns:
     acme:
-      # Overwritten in .env file
-      # email: email@address.com # Cloudflare email address
+      email: email@address.com # Cloudflare email address
       # Staging Server
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       # Production server
