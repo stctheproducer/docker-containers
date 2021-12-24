@@ -2,10 +2,11 @@
 #                   Authelia configuration                    #
 ###############################################################
 
+#! This file should be in the config directory
+
 host: 0.0.0.0
 port: 9091
 log_level: warn
-theme: dark
 
 # This secret can also be set using the env variables AUTHELIA_JWT_SECRET_FILE
 # I used this site to generate the secret: https://www.grc.com/passwords.htm
@@ -21,11 +22,12 @@ totp:
 
 # Enable the following for Duo Push Notification support
 # https://www.authelia.com/docs/features/2fa/push-notifications.html
-#duo_api:
-#  hostname: api-123456789.example.com
-#  integration_key: ABCDEF
-#  # This secret can also be set using the env variables AUTHELIA_DUO_API_SECRET_KEY_FILE
-#  secret_key: # use docker secret file instead AUTHELIA_DUO_API_SECRET_KEY_FILE
+# duo_api:
+#   hostname: api-123456789.example.com
+#   integration_key: ABCDEF
+#   # This secret can also be set using the env variables AUTHELIA_DUO_API_SECRET_KEY_FILE
+#   secret_key: # use docker secret file instead AUTHELIA_DUO_API_SECRET_KEY_FILE
+#   enable_self_enrollment: false
 
 authentication_backend:
   file:
@@ -66,12 +68,12 @@ session:
   inactivity: 300 # 5 minutes
   domain: example.com # Should match whatever your root protected domain is
 
-# Optional. Can improve performance on a busy system. If not enabled, session info is stored in memory.
-#  redis:
-#    host: redis
-#    port: 6379
-# This secret can also be set using the env variables AUTHELIA_SESSION_REDIS_PASSWORD_FILE
-# password: authelia
+  # Optional. Can improve performance on a busy system. If not enabled, session info is stored in memory.
+  # redis:
+  #   host: redis
+  #   port: 6379
+  #   This secret can also be set using the env variables AUTHELIA_SESSION_REDIS_PASSWORD_FILE
+  #   password: authelia
 
 regulation:
   max_retries: 3
@@ -79,6 +81,8 @@ regulation:
   ban_time: 300
 
 storage:
+  # This secret can also be set using the env variables AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+  # encryption_key: you_must_generate_a_random_string_of_more_than_twenty_chars_and_configure_this
   # For local storage, uncomment lines below and comment out mysql. https://docs.authelia.com/configuration/storage/sqlite.html
   #  local:
   #    path: /config/db.sqlite3

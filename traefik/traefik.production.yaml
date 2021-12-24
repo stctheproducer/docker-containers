@@ -54,7 +54,7 @@ providers:
 
 log:
   level: ERROR
-  filePath: /logs/traefik.json
+  filePath: /logs/traefik.log
   format: json
 
 certificatesResolvers:

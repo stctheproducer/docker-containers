@@ -2,8 +2,19 @@ http:
   middlewares:
     authelia:
       forwardAuth:
-        address: "http://authelia:9091/api/verify?rd=https://authelia.example.com"
+        address: "http://authelia:9091/api/verify?rd=https://authelia.kukura.io"
         trustForwardHeader: true
         authResponseHeaders:
           - "Remote-User"
           - "Remote-Groups"
+          # - "Remote-Name"
+          # - "Remote-Email"
+    authelia-basic:
+      forwardAuth:
+        address: "http://authelia:9091/api/verify?auth=basic"
+        trustForwardHeader: true
+        authResponseHeaders:
+          - "Remote-User"
+          - "Remote-Groups"
+          # - "Remote-Name"
+          # - "Remote-Email"
