@@ -5,8 +5,6 @@ version: '3.9'
 networks:
   proxy:
     driver: '${NETWORKS_DRIVER}'
-  portainer-proxy:
-    driver: '${NETWORKS_DRIVER}'
   dockernet:
     external: true
   backdocker:
@@ -20,7 +18,46 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      CONTAINERS: 1
+      LOG_LEVEL: info # debug,info,notice,warning,err,crit,alert,emerg
+      ## Variables match the URL prefix (i.e. AUTH blocks access to /auth/* parts of the API, etc.).
+      # 0 to revoke access.
+      # 1 to grant access.
+      ## Granted by Default
+      EVENTS: 1
+      PING: 1
+      VERSION: 1
+      ## Revoked by Default
+      # Security critical
+      AUTH: 0
+      SECRETS: 0
+      POST: 1 # Watchtower
+      DELETE: 1
+        # Watchtower
+        # GET Optons
+      BUILD: 0
+      COMMIT: 0
+      CONFIGS: 0
+      CONTAINERS: 1 # Traefik, portainer, etc.
+      DISTRIBUTION: 0
+      EXEC: 0
+      IMAGES: 1 # Portainer, Watchtower
+      INFO: 1 # Portainer
+      NETWORKS: 1 # Portainer, Watchtower
+      NODES: 0
+      PLUGINS: 0
+      SERVICES: 1 # Portainer
+      SESSION: 0
+      SWARM: 0
+      SYSTEM: 0
+      TASKS: 1 # Portaienr
+      VOLUMES: 1 # Portainer
+      # POST Options
+      CONTAINERS_CREATE: 1 # WatchTower
+      CONTAINERS_START: 1 # WatchTower
+      CONTAINERS_UPDATE: 1 # WatchTower
+      # DELETE Options
+      CONTAINERS_DELETE: 1 # WatchTower
+      IMAGES_DELETE: 1 # WatchTower
     networks:
       - proxy
 
@@ -49,57 +86,30 @@ services:
     labels:
       - 'traefik.enable=true'
     secrets:
-      - cloudflare_email 
+      - cloudflare_email
       - cloudflare_api_key
       - cloudflare_dns_api_token
-
-  ### PORTAINER ########################################
-  portainer-proxy:
-    image: tecnativa/docker-socket-proxy
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      CONTAINERS: 1
-      BUILD: 1
-      COMMIT: 1
-      CONFIGS: 1
-      DISTRIBUTION: 1
-      EXEC: 1
-      IMAGES: 1
-      INFO: 1
-      NETWORKS: 1
-      NODES: 1
-      PLUGINS: 1
-      SERVICES: 1
-      SESSION: 1
-      SWARM: 1
-      SYSTEM: 1
-      TASKS: 1
-      VOLUMES: 1
-      POST: 1
-      SECRETS: 1
-    networks:
-      - portainer-proxy
 
   portainer:
     image: portainer/portainer-ce:alpine
     container_name: portainer
     restart: always
-    command: '--admin-password=${PORTAINER_ADMIN_PASSWORD}'
+    command: '--admin-password-file=${PORTAINER_ADMIN_PASSWORD_FILE}'
     volumes:
       - '${DATA_PATH_HOST}/portainer:/data'
     networks:
       - dockernet
-      - portainer-proxy
+      - proxy
     depends_on:
-      - portainer-proxy
+      - socket-proxy
       - traefik
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)'
       - 'traefik.http.routers.portainer.entrypoints=websecure'
       - 'traefik.http.routers.portainer.tls=true'
+      - 'traefik.http.routers.portainer.tls.certresolver=cloudflareDns'
+      - 'traefik.http.routers.portainer.middlewares=chain-authelia@file'
       - 'traefik.http.services.portainer.loadbalancer.server.port=${PORTAINER_UI_PORT}'
     secrets:
       - portainer_admin_password

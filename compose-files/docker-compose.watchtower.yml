@@ -1,0 +1,23 @@
+version: '3.9'
+
+networks:
+  proxy:
+    driver: '${NETWORKS_DRIVER}'
+  dockernet:
+    external: true
+
+services:
+  # WatchTower - Automatic Docker Container Updates
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    networks:
+      - dockernet
+      - proxy
+    depends_on:
+      - socket-proxy
+    env_file:
+      - ./watchtower/.env
+    labels:
+      - 'traefik.enable=false'

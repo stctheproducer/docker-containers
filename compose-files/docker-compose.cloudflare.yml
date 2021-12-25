@@ -1,0 +1,53 @@
+version: '3.9'
+
+networks:
+  proxy:
+    driver: '${NETWORKS_DRIVER}'
+  dockernet:
+    external: true
+  backdocker:
+    external: true
+
+services:
+  # Cloudflare DDNS - Dynamic DNS Updater
+  cf-ddns:
+    container_name: cf-ddns
+    image: oznu/cloudflare-ddns:latest
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - ./cloudflare-ddns/.env
+    secrets:
+      - cf_token
+
+  # Cloudflare-Companion - Automatic CNAME DNS Creation
+  cf-companion:
+    container_name: cf-companion
+    image: tiredofit/traefik-cloudflare-companion:latest
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    # profiles:
+    # - core
+    networks:
+      - proxy
+    depends_on:
+      - socket-proxy
+    env_file:
+      - ./cloudflare/.env
+    secrets:
+      - cf_token
+      - cf_email
+      # labels:
+      # Add hosts specified in rules here to force cf-companion to create the CNAMEs
+      # Since cf-companion creates CNAMEs based on host rules, this a workaround for non-docker/external apps
+      # - "traefik.http.routers.cf-companion-rtr.rule=Host(`mox.$DOMAINNAME0`) ||
+      # Host(`pwt.$DOMAINNAME0`) || Host(`webmin.$DOMAINNAME0`) ||
+      # Host(`shell.$DOMAINNAME0`)"
+
+secrets:
+  cf_email:
+    file: $SECRETSDIR/cloudflare_email
+  cf_token:
+    file: $SECRETSDIR/cloudflare_api_key
