@@ -1,0 +1,3 @@
+ARG KETO_VERSION=v0.5.6-alpha.1
+
+FROM oryd/keto:${KETO_VERSION}

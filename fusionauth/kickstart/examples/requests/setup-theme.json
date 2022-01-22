@@ -1,0 +1,36 @@
+{
+  "method": "POST",
+  "url": "/api/theme",
+  "body": {
+    "theme": {
+      "defaultMessages": "@{templates/messages.ftl}",
+      "name": "#{themeName}",
+      "stylesheet": "@{templates/stylesheet.css}",
+      "templates": {
+        "emailComplete": "@{templates/email-verification-complete.ftl}",
+        "emailSend": "@{templates/email-verification-resend.ftl}",
+        "emailVerify": "@{templates/email-verification.ftl}",
+        "helpers": "@{templates/helpers.ftl}",
+        "oauth2Authorize": "@{templates/oauth-authorize.ftl}",
+        "oauth2ChildRegistrationNotAllowed": "@{templates/oauth-child-registration-not-allowed.ftl}",
+        "oauth2ChildRegistrationNotAllowedComplete": "@{templates/oauth-child-registration-not-allowed-complete.ftl}",
+        "oauth2CompleteRegistration": "@{templates/oauth-complete-registration.ftl}",
+        "oauth2Error": "@{templates/oauth-error.ftl}",
+        "oauth2Logout": "@{templates/oauth-logout.ftl}",
+        "oauth2Register": "@{templates/oauth-register.ftl}",
+        "oauth2TwoFactor": "@{templates/oauth-two-factor.ftl}",
+        "passwordChange": "@{templates/change-password-form.ftl}",
+        "passwordComplete": "@{templates/change-password-complete.ftl}",
+        "passwordForgot": "@{templates/forgot-password.ftl}",
+        "passwordSent": "@{templates/forgot-password-sent.ftl}",
+        "registrationComplete": "@{templates/verify-registration-complete.ftl}",
+        "registrationSend": "@{templates/verify-registration-resend.ftl}",
+        "registrationVerify": "@{templates/verify-registration.ftl}",
+        "oauth2Device": "@{templates/oauth-device.ftl}",
+        "oauth2DeviceComplete": "@{templates/oauth-device-complete.ftl}",
+        "oauth2Passwordless": "@{templates/oauth-passwordless.ftl}",
+        "oauth2Wait": "@{templates/oauth-wait.ftl}"
+      }
+    }
+  }
+}

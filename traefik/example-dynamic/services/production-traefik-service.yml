@@ -4,12 +4,12 @@ http:
       rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - websecure
-        - websecure
       tls:
-        certResolver: letsEncryptDns
+        certResolver: cloudflareDns
 
       middlewares:
-        - basic-auth
+        - chain-basic-auth
+        # - basic-auth
         # - secure-headers
         # - rate-limit
       service: api@internal

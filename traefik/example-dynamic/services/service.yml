@@ -32,4 +32,4 @@ http:
   #   serviceName:
   #     loadBalancer:
   #       servers:
-  #         - url: http://serviceName:{{ env "SERVICE_CONTAINER_PORT" }}
+  #         - url: http://serviceName:{{env "SERVICE_CONTAINER_PORT"}}

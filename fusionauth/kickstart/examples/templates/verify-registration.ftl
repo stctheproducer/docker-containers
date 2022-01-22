@@ -1,0 +1,21 @@
+[#ftl/]
+[#import "../_helpers.ftl" as helpers/]
+
+[@helpers.html]
+  [@helpers.head]
+    [#-- Custom <head> code goes here --]
+  [/@helpers.head]
+  [@helpers.body]
+    [@helpers.header]
+      [#-- Custom header code goes here --]
+    [/@helpers.header]
+
+    [@helpers.main title=theme.message('registration-verification-title')]
+      [#-- FusionAuth automatically handles errors that occur during registration verification and outputs them in the HTML --]
+    [/@helpers.main]
+
+    [@helpers.footer]
+      [#-- Custom footer code goes here --]
+    [/@helpers.footer]
+  [/@helpers.body]
+[/@helpers.html]

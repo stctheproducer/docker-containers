@@ -1,0 +1,32 @@
+{
+  "variables": {
+    "apiKey": "#{UUID()}",
+    "adminFirstName": "#{ENV.FUSIONAUTH_ADMIN_FIRST_NAME}",
+    "adminLastName": "#{ENV.FUSIONAUTH_ADMIN_LAST_NAME}",
+    "adminEmail": "#{ENV.FUSIONAUTH_ADMIN_EMAIL}",
+    "adminMobilePhone": "#{ENV.FUSIONAUTH_ADMIN_MOBILE_PHONE}",
+    "adminPassword": "#{ENV.FUSIONAUTH_ADMIN_PASSWORD}",
+    "authCompany": "#{ENV.FUSIONAUTH_COMPANY}",
+    "themeName": "#{ENV.FUSIONAUTH_THEME_NAME}",
+    "defaultEmailFrom": "#{ENV.FUSIONAUTH_EMAIL_FROM}",
+    "defaultEmailFromName": "#{ENV.FUSIONAUTH_EMAIL_FROM_NAME}"
+  },
+  "apiKeys": [
+    {
+      "key": "#{apiKey}",
+      "description": "The super user key"
+    }
+  ],
+  "requests": [
+    "&{requests/setup-admin-user.json}",
+    "&{requests/setup-breached-password-notification-email.json}",
+    "&{requests/setup-change-password-email.json}",
+    "&{requests/setup-coppa-email-plus-notice-email.json}",
+    "&{requests/setup-coppa-notice-email.json}",
+    "&{requests/setup-email-verification-email.json}",
+    "&{requests/setup-password-email.json}",
+    "&{requests/setup-passwordless-login-email.json}",
+    "&{requests/setup-registration-verification-email.json}",
+    "&{requests/setup-theme.json}"
+  ]
+}

@@ -1,14 +1,7 @@
 # ! DO NOT LEAVE WHITESPACE AT THE BRACKET ENDS
 http:
   routers:
-    traefik-long:
-      rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
-      entryPoints:
-        - web
-      middlewares:
-        - redirecthttp
-      service: api@internal
-    traefik-long-secure:
+    traefik:
       rule: Host(`traefik.{{env "DOMAIN_NAME"}}`)
       entryPoints:
         - websecure

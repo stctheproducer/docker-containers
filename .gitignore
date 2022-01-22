@@ -1,9 +1,12 @@
 .env
 docker-compose.yml
+docker-compose.*.yml
+!compose-files/*
 traefik/traefik.yaml
 traefik/dnschallenge/*
 traefik/.env
 webhook/hooks/hooks.json
+webhook/hooks/hooks.yml
 webhook/scripts/*.sh
 mongo/mongod.conf
 secrets/*.secret
@@ -11,3 +14,5 @@ secrets/*.secret
 explorer/examples/certs/cert.pem
 explorer/examples/certs/key.pem
 ./**/*.lock
+logs/**/*.json
+logs/**/*.log

@@ -1,4 +1,0 @@
-type Mutation {
-  createUser(firstName: String!, lastName: String!, email: String!, otherName: String, password: String!): User!
-  login(email: String!, password: String!): LoggedInUser!
-}

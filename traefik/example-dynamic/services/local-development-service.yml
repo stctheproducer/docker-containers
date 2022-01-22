@@ -1,19 +1,17 @@
 # This is meant to be run on the server that is connected to in the reverse SSH tunnel
 http:
   routers:
-    medcop:
+    service:
       entryPoints:
-        - web
         - websecure
       rule: Host(`service-dev.{{env "DOMAIN_NAME"}}`)
       service: dev
       tls:
         certResolver: letsEncryptDns
-    medcop-api:
+    service-api:
       entryPoints:
-        - web
         - websecure
-      rule: Host(`medcop-api-dev.{{env "DOMAIN_NAME"}}`)
+      rule: Host(`service-api-dev.{{env "DOMAIN_NAME"}}`)
       service: dev
       tls:
         certResolver: letsEncryptDns
@@ -22,4 +20,4 @@ http:
     dev:
       loadBalancer:
         servers:
-          - url: http://192.168.0.1:{{PORT_NUMBER_OF_LOCAL_MACHINE}}
+          - url: http://192.168.1.1:{{PORT_NUMBER_OF_LOCAL_MACHINE}}

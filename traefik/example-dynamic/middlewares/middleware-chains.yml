@@ -11,3 +11,9 @@ http:
           - rate-limit
           - secure-headers
           - basic-auth
+    chain-authelia:
+      chain:
+        middlewares:
+          - rate-limit
+          - secure-headers
+          - authelia

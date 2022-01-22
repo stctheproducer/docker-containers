@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "url": "/api/email/template",
+  "body": {
+    "emailTemplate": {
+      "defaultFromName": "#{defaultEmailFromName}",
+      "defaultSubject": "Verify your Email Address",
+      "defaultHtmlTemplate": "email-verification.html.ftl",
+      "defaultTextTemplate": "email-verification.txt.ftl",
+      "fromEmail": "#{defaultEmailFrom}",
+      "name": "Email Verification"
+    }
+  }
+}

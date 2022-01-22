@@ -18,5 +18,5 @@ http:
     https-redirect:
       redirectScheme:
         scheme: https
-        permanent: "true"
+        permanent: true
         port: 443
