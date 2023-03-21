@@ -1,0 +1,177 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://github.com/stctheproducer/docker-containers/webhook/webhook.schema.json",
+  "title": "Webhook",
+  "description": "A unique entry in the webhook.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "execute-command": {
+        "type": "string"
+      },
+      "command-working-directory": {
+        "type": "string"
+      },
+      "response-message": {
+        "type": "string"
+      },
+      "response-headers": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/response-header"
+        }
+      },
+      "http-methods": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "include-command-output-in-response": {
+        "type": "boolean"
+      },
+      "include-command-output-in-response-on-error": {
+        "type": "boolean"
+      },
+      "pass-arguments-to-command": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": ["source", "name"]
+        }
+      },
+      "trigger-rule": {
+        "type": "object",
+        "properties": {
+          "and": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "match": {
+                  "$ref": "#/$defs/match"
+                }
+              }
+            }
+          },
+          "or": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "match": {
+                  "$ref": "#/$defs/match"
+                }
+              }
+            }
+          },
+          "not": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "match": {
+                  "$ref": "#/$defs/match"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "required": ["id"]
+  },
+  "uniqueItems": true,
+  "$defs": {
+    "response-header": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "value"]
+    },
+    "match": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "ip-range": {
+          "type": "string"
+        },
+        "regex": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "parameter": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": ["source", "name"]
+        }
+      },
+      "required": ["type", "parameter"]
+    },
+    "and": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "$ref": "#/$defs/match"
+          }
+        }
+      }
+    },
+    "or": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "$ref": "#/$defs/match"
+          }
+        }
+      }
+    },
+    "not": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "$ref": "#/$defs/match"
+          }
+        }
+      }
+    }
+  }
+}
