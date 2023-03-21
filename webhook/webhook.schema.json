@@ -8,7 +8,8 @@
     "type": "object",
     "properties": {
       "id": {
-        "type": "string"
+        "type": "string",
+        "description": "A unique ID that specifies the webhook."
       },
       "execute-command": {
         "type": "string"
@@ -28,7 +29,8 @@
       "http-methods": {
         "type": "array",
         "items": {
-          "type": "string"
+          "type": "string",
+          "enum": ["POST", "GET"]
         }
       },
       "include-command-output-in-response": {
@@ -89,6 +91,9 @@
             }
           }
         }
+      },
+      "trigger-rule-mismatch-http-response-code": {
+        "type": "number"
       }
     },
     "required": ["id"]
